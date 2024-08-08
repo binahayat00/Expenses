@@ -16,5 +16,7 @@
     "autoload-dev": {
         "Test\\": "test/"
     },
-    "require": {}
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    }
 }
