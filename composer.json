@@ -1,0 +1,20 @@
+{
+    "name": "expenses/expenses",
+    "version": "1.0.0",
+    "description": "Expenses Project",
+    "license": "1.0",
+    "authors": [
+        {
+            "name": "Amir"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "Test\\": "test/"
+    },
+    "require": {}
+}
