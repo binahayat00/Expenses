@@ -15,6 +15,8 @@ use Slim\Views\Twig;
 use App\Enum\SameSite;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Component\Cache\Psr16Cache;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\Storage\CacheStorage;
 use function DI\create;
 use Clockwork\Clockwork;
 use Doctrine\ORM\ORMSetup;
@@ -172,15 +174,20 @@ return [
 
     BodyRendererInterface::class => fn(Twig $twig) => new BodyRenderer($twig->getEnvironment()),
     RouteParserInterface::class => fn(App $app) => $app->getRouteCollector()->getRouteParser(),
-    CacheInterface::class => function(Config $config) {
+    CacheInterface::class => fn(RedisAdapter $redisAdapter) => new Psr16Cache($redisAdapter),
+    RedisAdapter::class => function(Config $config){
         $redis = new \Redis();
         $config = $config->get('redis');
 
         $redis->connect($config['host'], (int) $config['port']);
         $redis->auth($config['password']);
 
-        $adapter = new RedisAdapter($redis);
+        return new RedisAdapter($redis);
+    },
+    RateLimiterFactory::class => function(RedisAdapter $redisAdapter, Config $config) {
+        $storage = new CacheStorage($redisAdapter);
 
-        return new Psr16Cache($adapter);
-    }
+        return new RateLimiterFactory($config->get('limiter'), $storage);
+    },
+
 ];
