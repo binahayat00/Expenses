@@ -21,6 +21,14 @@
         "slim/slim": "^4.14",
         "slim/psr7": "^1.7",
         "php-di/php-di": "^7.0",
-        "slim/twig-view": "^3.4"
+        "slim/twig-view": "^3.4",
+        "twig/intl-extra": "^3.11",
+        "symfony/cache": "^7.1",
+        "symfony/console": "^7.1",
+        "symfony/twig-bridge": "^7.1",
+        "symfony/webpack-encore-bundle": "^2.1",
+        "doctrine/dbal": "^4.0",
+        "doctrine/migrations": "^3.8",
+        "doctrine/orm": "^3.2"
     }
 }
