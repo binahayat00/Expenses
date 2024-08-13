@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-const APP_PATH = dirname(__DIR__) . '/app';
-const VIEW_PATH = dirname(__DIR__) . '/resources/views';
-const STORAGE_PATH = dirname(__DIR__) . '/storage';
-const CONFIG_PATH = dirname(__DIR__) . '/configs';
-const BUILD_PATH = dirname(__DIR__) . '/public/build';
+$dirname = dirname(__DIR__);
+
+define('APP_PATH', "$dirname/app");
+define('VIEW_PATH', "$dirname/resources/views");
+define('STORAGE_PATH', "$dirname/storage");
+define('CONFIG_PATH', "$dirname/configs");
+define('BUILD_PATH', "$dirname/public/build");
