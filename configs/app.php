@@ -12,7 +12,7 @@ return [
     'app_environment' => $appEnv,
     'display_error_details' => (bool) ($_ENV['APP_DEBUG'] ?? 0),
     'log_errors' => true,
-    'log_errors_details' => true,
+    'log_error_details' => true,
     'doctrine' => [
         'dev_mode' => AppEnvironment::isDevelopment($appEnv),
         'cache_dir' => STORAGE_PATH . '/cache/doctrine',
