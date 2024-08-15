@@ -25,25 +25,15 @@ use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface;
 return [
     Config::class => create(Config::class)->constructor(require CONFIG_PATH . "/app.php"),
     Twig::class => function (Config $config, ContainerInterface $container) {
-        // $twig = Twig::create(VIEW_PATH, [
-        //     'cache' => STORAGE_PATH . '/cache/templates',
-        //     'auto_reload' => AppEnvironment::isDevelopment($config->get('app_environment')),
-        // ]);
         $twig = Twig::create(VIEW_PATH, [
             'cache' => STORAGE_PATH . '/cache/templates',
             'auto_reload' => AppEnvironment::isDevelopment($config->get('app_environment')),
         ]);
-        
-        // $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__) ."/../resources/assets/views");
-        // $twig = new \Twig\Environment($loader, [
-        //     'cache' => STORAGE_PATH . '/cache/templates',
-        // ]);
 
         $twig->addExtension(new IntlExtension());
         $twig->addExtension(new EntryFilesTwigExtension($container));
         $twig->addExtension(new AssetExtension($container->get('webpack_encore.packages')));
-        // $twig->addExtension(new AssetExtension($container->get('webpack_encore.packages')));
-        
+
         return $twig;
     },
     EntityManager::class =>  function(Config $config) {
@@ -61,23 +51,10 @@ return [
         new Package(new JsonManifestVersionStrategy(
             BUILD_PATH . '/manifest.json'
     ))),
-    // 'webpack_encore.packages' => fn() => new Packages(
-    //     new Package(new JsonManifestVersionStrategy(
-    //         BUILD_PATH . '/manifest.json'
-    // ))),
     'webpack_encore.entrypoint_lookup' => fn() => new EntrypointLookup(BUILD_PATH . '/entrypoints.json'),
-    // 'webpack_encore.tag_renderer' => fn(ContainerInterface $container) => new TagRenderer(
-    //     new EntrypointLookupCollection($container->get('webpack_encore.entrypoint_lookup')),
-    //     $container->get('webpack_encore.packages')
-    // ),
     'webpack_encore.tag_renderer' => fn(ContainerInterface $container) => new TagRenderer(
-        new EntrypointLookupCollection($container),//->get('webpack_encore.entrypoint_lookup')
-        // $container->get('webpack_encore.packages')
+        new EntrypointLookupCollection($container),
         $container->get('webpack_encore.packages')
     ),
-    // 'webpack_encore.tag_renderer' => fn(ContainerInterface $container) => new TagRenderer(
-        // new EntrypointLookup(BUILD_PATH . '/entrypoints.json'),
-    //     $container->get('webpack_encore.packages')
-    // ),
     '_default' => fn() => new EntrypointLookup(BUILD_PATH . '/entrypoints.json'),
 ];
