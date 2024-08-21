@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Entity\User;
+use App\Exception\ValidationException;
 use Doctrine\ORM\EntityManager;
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Views\Twig;
+use Valitron\Validator;
 
 class AuthController
 {
@@ -31,16 +33,43 @@ class AuthController
     {
         $data = $request->getParsedBody();
 
+        $v = new Validator($data);
+        $v->rule('required', ['name', 'email', 'password', 'confirmPassword']);
+        $v->rule('email', 'email');
+        $v->rule('equals', 'confirmPassword', 'password')->label('Confirm Password');
+        var_dump($this->entityManager->getRepository(User::class)->count(
+            ['email' => $data['email']]
+        ));
+        $v->rule(
+            fn($field, $value, $params, $fields) =>
+            $this->entityManager->getRepository(User::class)->count(
+                ['email' => $value]
+            ) === 0,
+            "email"
+        )->message(
+                "{field} failed...(User with the given email address already exists!"
+            );
+
+        if ($v->validate()) {
+            echo "Yay! We're all good!";
+        } else {
+            // print_r($v->errors());
+            throw new ValidationException($v->errors());
+        }
+
+
+        var_dump($v);
+        exit;
+
         $user = new User();
 
         $user->setName($data['name']);
         $user->setEmail($data['email']);
         $user->setPassword(password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 12]));
-        
+
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        var_dump($data);
         return $response;
     }
 }
