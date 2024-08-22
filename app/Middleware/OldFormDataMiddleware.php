@@ -8,7 +8,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class ValidationErrorsMiddleware implements MiddlewareInterface 
+class OldFormDataMiddleware implements MiddlewareInterface 
 {
     public function __construct(private readonly Twig $twig)
     {
@@ -16,13 +16,13 @@ class ValidationErrorsMiddleware implements MiddlewareInterface
     }
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if(! empty($_SESSION['errors']))
+        if(! empty($_SESSION['old']))
         {
-            $errors = $_SESSION['errors'];
+            $old = $_SESSION['old'];
 
-            $this->twig->getEnvironment()->addGlobal('errors', $errors);
+            $this->twig->getEnvironment()->addGlobal('old', $old);
             
-            unset($_SESSION['errors']);
+            unset($_SESSION['old']);
         }
         return $handler->handle($request);
     }
