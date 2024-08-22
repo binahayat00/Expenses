@@ -11,13 +11,5 @@ require __DIR__ ."/configs/path_constants.php";
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-$container = require CONFIG_PATH . "/container/container.php";
-$addMiddleware = require CONFIG_PATH . '/middleware.php';
 
-AppFactory::setContainer($container);
-
-$app = AppFactory::create();
-
-$addMiddleware($app);
-
-return $app;
+return require CONFIG_PATH . "/container/container.php";

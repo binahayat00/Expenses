@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Config;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Slim\Factory\AppFactory;
 use Slim\Views\Twig;
 use function DI\create;
 use Doctrine\ORM\ORMSetup;
@@ -17,12 +19,26 @@ use Symfony\Bridge\Twig\Extension\AssetExtension;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension;
-
+use Slim\App;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
 use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface;
 
 return [
+    App::class => function(ContainerInterface $container){
+        AppFactory::setContainer($container);
+        
+        $router = require CONFIG_PATH ."/routes/web.php";
+        $addMiddleware = require CONFIG_PATH . '/middleware.php';
+
+        $app = AppFactory::create();
+
+        $router($app);
+
+        $addMiddleware($app);
+        
+        return $app;
+    },
     Config::class => create(Config::class)->constructor(require CONFIG_PATH . "/app.php"),
     Twig::class => function (Config $config, ContainerInterface $container) {
         $twig = Twig::create(VIEW_PATH, [
@@ -57,4 +73,6 @@ return [
         $container->get('webpack_encore.packages')
     ),
     '_default' => fn() => new EntrypointLookup(BUILD_PATH . '/entrypoints.json'),
+
+    ResponseFactoryInterface::class => fn(App $app) => $app->getResponseFactory(),
 ];
