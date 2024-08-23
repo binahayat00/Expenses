@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
+use Slim\App;
 use App\Config;
+use Slim\Views\Twig;
+use Slim\Views\TwigMiddleware;
 use App\Middleware\OldFormDataMiddleware;
+use App\Middleware\AuthenticateMiddleware;
 use App\Middleware\StartSessionsMiddleware;
 use App\Middleware\ValidationErrorsMiddleware;
 use App\Middleware\ValidationExceptionMiddleware;
-use Slim\App;
-use Slim\Views\Twig;
-use Slim\Views\TwigMiddleware;
 
 
 return function (App $app) {
@@ -20,7 +21,8 @@ return function (App $app) {
     $app->add(ValidationExceptionMiddleware::class);
     $app->add(ValidationErrorsMiddleware::class);
     $app->add(OldFormDataMiddleware::class);
-
+    $app->add(AuthenticateMiddleware::class);
+    
     $app->add(StartSessionsMiddleware::class);
 
 
