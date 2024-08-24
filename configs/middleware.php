@@ -22,7 +22,7 @@ return function (App $app) {
     $app->add(ValidationErrorsMiddleware::class);
     $app->add(OldFormDataMiddleware::class);
     $app->add(AuthenticateMiddleware::class);
-    
+
     $app->add(StartSessionsMiddleware::class);
 
 
