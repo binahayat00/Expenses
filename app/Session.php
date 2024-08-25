@@ -52,4 +52,30 @@ class Session implements SessionInterface
     {
         return session_status() === PHP_SESSION_ACTIVE;
     }
+
+    public function forget(string $name): void
+    {
+        unset($_SESSION[$name]);
+    }
+
+    public function regenerate(): bool
+    {
+        return session_regenerate_id();
+    }
+
+    public function put(string $name, mixed $value): void
+    {
+        $_SESSION[$name] = $value;
+    }
+
+    public function get(string $name, mixed $default = null): mixed
+    {
+        return $this->has($name) ? $_SESSION[$name] : $default;
+    }
+
+    public function has(string $name): bool
+    {
+        return array_key_exists($name, $_SESSION);
+    }
+
 }
