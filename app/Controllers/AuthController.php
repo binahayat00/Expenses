@@ -54,9 +54,7 @@ class AuthController
                 "{field} failed...(User with the given email address already exists!"
             );
 
-        if ($v->validate()) {
-            echo "Yay! We're all good!";
-        } else {
+        if (! $v->validate()) {
             throw new ValidationException($v->errors());
         }
 

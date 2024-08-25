@@ -87,6 +87,7 @@ return [
     SessionInterface::class => fn(Config $config) => new Session(
         new SessionConfig(
             $config->get('session.name', ''),
+            $config->get('session.flashName', 'flash'),
             $config->get('session.secure', true),
             $config->get('session.httponly', true),
             SameSite::from($config->get('session.samesite', 'lax')),

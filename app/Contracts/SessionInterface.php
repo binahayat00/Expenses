@@ -21,4 +21,9 @@ interface SessionInterface
     public function get(string $name, mixed $default = null): mixed;
     
     public function has(string $name): bool;
+
+    public function flash(string $name, array $messages): void;
+
+    public function getFlash(string $name): array;
+
 }
