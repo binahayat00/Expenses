@@ -36,4 +36,11 @@ class UserProviderService implements UserProviderServiceInterface
 
         return $user;
     }
+
+    public function countOfUsersByEmail(string $email): ?int
+    {
+        return $this->entityManager->getRepository(User::class)->count(
+            ['email' => $email]
+        );
+    }
 }

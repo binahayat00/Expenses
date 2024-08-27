@@ -3,12 +3,11 @@
 declare(strict_types=1);
 
 use App\Auth;
-use App\DataObjects\SessionConfig;
-use App\Enum\SameSite;
 use Slim\App;
 use App\Config;
 use App\Session;
 use Slim\Views\Twig;
+use App\Enum\SameSite;
 use function DI\create;
 use Doctrine\ORM\ORMSetup;
 use App\Enum\AppEnvironment;
@@ -16,6 +15,7 @@ use Slim\Factory\AppFactory;
 use Doctrine\ORM\EntityManager;
 use App\Contracts\AuthInterface;
 use Doctrine\DBAL\DriverManager;
+use App\DataObjects\SessionConfig;
 use Twig\Extra\Intl\IntlExtension;
 use App\Contracts\SessionInterface;
 use Symfony\Component\Asset\Package;
@@ -25,7 +25,9 @@ use Symfony\Component\Asset\Packages;
 use Psr\Http\Message\ResponseFactoryInterface;
 use App\Contracts\UserProviderServiceInterface;
 use Symfony\Bridge\Twig\Extension\AssetExtension;
+use App\RequestValidators\RequestValidatorFactory;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
+use App\Contracts\RequestValidatorFactoryInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
@@ -93,4 +95,5 @@ return [
             SameSite::from($config->get('session.samesite', 'lax')),
     )
     ),
+    RequestValidatorFactoryInterface::class => fn(ContainerInterface $container) => $container->get(RequestValidatorFactory::class),
 ];
