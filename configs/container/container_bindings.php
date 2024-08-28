@@ -6,6 +6,7 @@ use App\Auth;
 use Slim\App;
 use App\Config;
 use App\Session;
+use Slim\Csrf\Guard;
 use Slim\Views\Twig;
 use App\Enum\SameSite;
 use function DI\create;
@@ -96,4 +97,7 @@ return [
     )
     ),
     RequestValidatorFactoryInterface::class => fn(ContainerInterface $container) => $container->get(RequestValidatorFactory::class),
+    'csrf', fn(ResponseFactoryInterface $responseFactory) => new Guard(
+        $responseFactory,
+        persistentTokenMode: true),
 ];
