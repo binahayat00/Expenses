@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Middleware\CsrfMiddleware;
 use Slim\App;
 use App\Config;
 use Slim\Views\Twig;
@@ -16,10 +17,12 @@ return function (App $app) {
     $container = $app->getContainer();
     $config = $container->get(Config::class);
 
+    $app->add('csrf');
     $app->add(TwigMiddleware::create($app, $container->get(Twig::class)));
     $app->add(ValidationExceptionMiddleware::class);
     $app->add(ValidationErrorsMiddleware::class);
     $app->add(OldFormDataMiddleware::class);
+    $app->add(CsrfMiddleware::class);
 
     $app->add(StartSessionsMiddleware::class);
 
