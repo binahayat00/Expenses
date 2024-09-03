@@ -6,6 +6,7 @@ use App\Middleware\CsrfFieldsMiddleware;
 use App\Middleware\CsrfMiddleware;
 use Slim\App;
 use App\Config;
+use Slim\Middleware\MethodOverrideMiddleware;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 use App\Middleware\OldFormDataMiddleware;
@@ -18,6 +19,7 @@ return function (App $app) {
     $container = $app->getContainer();
     $config = $container->get(Config::class);
 
+    $app->add(MethodOverrideMiddleware::class);
     $app->add(CsrfFieldsMiddleware::class);
     $app->add('csrf');
     $app->add(TwigMiddleware::create($app, $container->get(Twig::class)));
