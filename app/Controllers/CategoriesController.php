@@ -55,4 +55,20 @@ class CategoriesController
             ->withHeader('Location', '/categories')
             ->withStatus(302);
     }
+
+    public function get(Request $request, Response $response, array $args): Response
+    {
+        $category = $this->categoryService->getById((int) $args['id']);
+
+        if(! $category)
+        {
+            return $response->withStatus(404);
+        }
+
+        $data = ['id' => $category->getId(), 'name' => $category->getName()];
+
+        $response->getBody()->write(json_encode($data));
+
+        return $response;
+    }
 }
