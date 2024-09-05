@@ -71,4 +71,18 @@ class CategoriesController
 
         return $this->responseFormatter->asJson($response, $data);
     }
+
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        $category = $this->categoryService->getById((int) $args['id']);
+
+        if(! $category)
+        {
+            return $response->withStatus(404);
+        }
+
+        $data = ['status' => 'Ok'];
+
+        return $this->responseFormatter->asJson($response, $data);
+    }
 }
