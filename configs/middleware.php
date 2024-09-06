@@ -27,6 +27,7 @@ return function (App $app) {
     $app->add(ValidationErrorsMiddleware::class);
     $app->add(OldFormDataMiddleware::class);
     $app->add(CsrfMiddleware::class);
+    $app->addBodyParsingMiddleware();
 
     $app->add(StartSessionsMiddleware::class);
 
