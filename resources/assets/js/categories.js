@@ -17,17 +17,21 @@ window.addEventListener('DOMContentLoaded', function () {
 
     document.querySelector('.save-category-btn').addEventListener('click', function (event) {
         const categoryId = event.currentTarget.getAttribute('data-id')
-
+        const csrfName = editCategoryModal._element.querySelector('input[name="csrf_name"]').value
+        const csrfValue = editCategoryModal._element.querySelector('input[name="csrf_value"]').value
+        const categoryName = editCategoryModal._element.querySelector('input[name="name"]').value
+        
         fetch(`/categories/${categoryId}`, {
             method: 'POST',
             body: JSON.stringify({
-                name: editCategoryModal._element.querySelector('input[name="name"]').value
+                name: categoryName,
+                csrf_name: csrfName,
+                csrf_value: csrfValue,
             }),
             header: {
                 'Content-Type' : 'application/json'
             }
-        }).then(response => response.text())
-        .then(response => {
+        }).then(response => {
             console.log(response)
         })
 
