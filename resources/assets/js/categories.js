@@ -26,7 +26,8 @@ window.addEventListener('DOMContentLoaded', function () {
             header: {
                 'Content-Type' : 'application/json'
             }
-        }).then(response => {
+        }).then(response => response.text())
+        .then(response => {
             console.log(response)
         })
 

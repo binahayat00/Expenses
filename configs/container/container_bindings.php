@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Auth;
+use App\Csrf;
 use Slim\App;
 use App\Config;
 use App\Session;
@@ -97,7 +98,8 @@ return [
     )
     ),
     RequestValidatorFactoryInterface::class => fn(ContainerInterface $container) => $container->get(RequestValidatorFactory::class),
-    'csrf' => fn(ResponseFactoryInterface $responseFactory) => new Guard(
+    'csrf' => fn(ResponseFactoryInterface $responseFactory, Csrf $csrf) => new Guard(
         $responseFactory,
+        failureHandler: $csrf->failureHandler(),
         persistentTokenMode: true),
 ];
