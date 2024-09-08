@@ -9,10 +9,10 @@ window.addEventListener('DOMContentLoaded', function () {
             const categoryId = event.currentTarget.getAttribute('data-id')
 
             get(`/categories/${categoryId}`)
+                .then(response => response.json())
                 .then(response => openEditCategoryModal(editCategoryModal, response))
 
-            // TODO: Fetch category info from controller & pass it to this function
-        })
+            })
     })
 
     document.querySelector('.save-category-btn').addEventListener('click', function (event) {
@@ -21,8 +21,11 @@ window.addEventListener('DOMContentLoaded', function () {
         
         post(`/categories/${categoryId}`, {
                 name: categoryName,
-        })
+        }, editCategoryModal._element)
         .then(response => {
+            if(response.ok){
+                editCategoryModal.hide()
+            }
             console.log(response)
         })
 

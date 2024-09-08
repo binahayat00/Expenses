@@ -1,40 +1,81 @@
-const ajax = (url, method = 'get', data = {}) => {
+const ajax = (url, method = 'get', data = {}, domElement = null) => {
     method = method.toLowerCase()
 
     let options = {
         method,
         headers: {
-            'Content-Type' : 'application/json',
+            'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest'
         }
     }
 
     const csrfMethods = new Set(['post', 'put', 'delete', 'patch']);
 
-    if(csrfMethods.has(method)){
-        options.body = JSON.stringify({...data, ...getCsrfFields()})
-    } else if(method === 'get'){
+    if (csrfMethods.has(method)) {
+        options.body = JSON.stringify({ ...data, ...getCsrfFields() })
+    } else if (method === 'get') {
         url += '?' + (new URLSearchParams(data)).toString();
     }
 
-    return fetch(url, options).then(response => response.json())
+    return fetch(url, options).then(response => {
+        if (domElement) {
+            clearValidationErrors(domElement)
+        }
+
+        if (!response.ok) {
+            if (response.status === 422) {
+                response.json().then(errors => {
+                    handleValidationErrors(errors, domElement)
+                })
+            }
+        }
+
+        return response
+    })
 }
 
 const get = (url, data) => ajax(url, 'get', data)
-const post = (url, data) => ajax(url, 'post', data)
+const post = (url, data, domElement) => ajax(url, 'post', data, domElement)
 
-function getCsrfFields()
-{
+function handleValidationErrors(errors, domElement) {
+    for (const name in errors) {
+        const element = domElement.querySelector(`input[name="${name}"]`)
+
+        element.classList.add('is-invalid')
+
+        for (const error of errors[name]) {
+            const errorDiv = document.createElement('div')
+
+            errorDiv.classList.add('invalid-feedback')
+            errorDiv.textContent = error
+
+            element.parentNode.append(errorDiv)
+        }
+        console.log(errors[name])
+    }
+}
+
+function clearValidationErrors(domElement) {
+    domElement.querySelectorAll('.is-invalid').forEach(function (element) {
+        element.classList.remove('is-invalid')
+
+        element.parentNode.querySelectorAll('.invalid-feedback').forEach(function (e) {
+            e.remove()
+        })
+    })
+}
+
+function getCsrfFields() {
     const csrfNameField = document.querySelector('#csrfName')
     const csrfValueField = document.querySelector('#csrfValue')
     const csrfNameKey = csrfNameField.getAttribute('name')
-    const csrfName = csrfNameField.content 
+    const csrfName = csrfNameField.content
     const csrfValueKey = csrfValueField.getAttribute('name')
-    const csrfValue = csrfValueField.content 
+    const csrfValue = csrfValueField.content
 
     return {
-        [csrfNameKey] : csrfName,
-        [csrfValueKey] : csrfValue,
+        [csrfNameKey]: csrfName,
+        [csrfValueKey]: csrfValue,
     }
 }
 
