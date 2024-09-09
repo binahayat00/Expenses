@@ -1,5 +1,5 @@
 import { Modal } from "bootstrap"
-import { get, post } from "./ajax"
+import { get, post, del } from "./ajax"
 
 window.addEventListener('DOMContentLoaded', function () {
     const editCategoryModal = new Modal(document.getElementById('editCategoryModal'))
@@ -30,6 +30,15 @@ window.addEventListener('DOMContentLoaded', function () {
         })
 
 
+    })
+
+    document.querySelector('.delete-category-btn').addEventListener('click', function (event) {
+        const categoryId = event.currentTarget.getAttribute('data-id')
+        
+        if(confirm('Are you sure want to delete this category?')) {
+            del(`/categories/${categoryId}`)
+        }
+        
     })
 })
 
