@@ -59,6 +59,8 @@
   },
   "dependencies": {
     "bootstrap-icons": "^1.11.3",
-    "core-js": "^3.38.1"
+    "core-js": "^3.38.1",
+    "datatables.net": "^2.1.6",
+    "datatables.net-dt": "^2.1.6"
   }
 }
