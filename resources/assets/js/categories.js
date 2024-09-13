@@ -1,9 +1,33 @@
 import { Modal } from "bootstrap"
 import { get, post, del } from "./ajax"
+import DataTable  from "datatables.net";
 
 window.addEventListener('DOMContentLoaded', function () {
     const editCategoryModal = new Modal(document.getElementById('editCategoryModal'))
 
+    const table = new DataTable('#categoriesTable',{
+        serverSide: true,
+        ajax: '/categories/load',
+        orderMulti: false,
+        columns: [
+            {data: "name"},
+            {data: "createdAt"},
+            {data: "updatedAt"},
+            {
+                sortable: false,
+                data: row => `
+                    <div class="d-flex flex-">
+                        <button type="submit" class="btn btn-outline-primary delete-category-btn" data-id="${ row.id }" >
+                            <i class="bi bi-trash3-fill"></i>
+                        </button>
+                        <button class="ms-2 btn btn-outline-primary delete-category-btn" data-id="${ row.id }">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                    </div>
+                `
+            }
+        ]
+    })
     document.querySelectorAll('.edit-category-btn').forEach(button => {
         button.addEventListener('click', function (event) {
             const categoryId = event.currentTarget.getAttribute('data-id')
