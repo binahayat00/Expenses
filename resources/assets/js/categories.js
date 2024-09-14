@@ -44,7 +44,10 @@ window.addEventListener('DOMContentLoaded', function () {
 
             if(confirm('Are you sure want to delete this category?')){
                 del(`/categories/${ categoryId }`).then(() => {
-                    table.draw()
+                    if(response.ok)
+                    {
+                        table.draw()
+                    }
                 })
             }
         }
@@ -70,6 +73,7 @@ window.addEventListener('DOMContentLoaded', function () {
         }, editCategoryModal._element)
         .then(response => {
             if(response.ok){
+                table.draw()
                 editCategoryModal.hide()
             }
             console.log(response)
