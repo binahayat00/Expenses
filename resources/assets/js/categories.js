@@ -1,6 +1,6 @@
 import { Modal } from "bootstrap"
 import { get, post, del } from "./ajax"
-import DataTable  from "datatables.net";
+import DataTable  from "datatables.net-dt";
 
 window.addEventListener('DOMContentLoaded', function () {
     const editCategoryModal = new Modal(document.getElementById('editCategoryModal'))
