@@ -43,13 +43,15 @@ class CategoryService
         return $this->entityManager->getRepository(Category::class)->findAll();
     }
 
-    public function getPaginatedCategories(int $start, int $length): Paginator
+    public function getPaginatedCategories(int $start, int $length, string $orderBy , string $orderDir): Paginator
     {
         $query = $this->entityManager->getRepository(Category::class)
             ->createQueryBuilder('c')
             ->setFirstResult($start)
             ->setMaxResults($length);
-
+        
+        $query->orderBy('c.' . $orderBy, $orderDir);
+        
         return new Paginator($query);
     }
     public function delete(int $id): void
