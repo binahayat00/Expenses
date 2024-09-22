@@ -50,6 +50,9 @@ class CategoryService
             ->setFirstResult($start)
             ->setMaxResults($length);
         
+        $orderBy = in_array($orderBy, ['name', 'createdAt', 'updatedAt']) ? $orderBy : 'updatedAt';
+        $orderDir = strtolower($orderDir) === 'asc' ? 'asc' : 'desc';
+
         $query->orderBy('c.' . $orderBy, $orderDir);
         
         return new Paginator($query);
