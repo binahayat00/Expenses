@@ -55,6 +55,7 @@ class CategoryService
 
         if (! empty($search))
         {
+            $search = addcslashes($search,'%_');
             $query->where('c.name LIKE :name')->setParameter(
                 'name',
                 "%$search%"
