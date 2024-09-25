@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 use App\Entity\Category;
+use App\Services\RequestService;
 use Slim\Views\Twig;
 use App\ResponseFormatter;
 use App\Services\CategoryService;
@@ -17,6 +18,7 @@ class CategoriesController
         private readonly Twig $twig, 
         private readonly RequestValidatorFactoryInterface $requestValidatorFactory,
         private readonly CategoryService $categoryService,
+        private readonly RequestService $requestService,
         private readonly ResponseFormatter $responseFormatter
         )
     {
@@ -94,17 +96,10 @@ class CategoriesController
 
     public function load(Request $request, Response $response): Response
     {
-        $params = $request->getQueryParams();
-
-        $orderBy = $params['columns'][$params['order'][0]['column']]['data'];
-        $orderDir = $params['order'][0]['dir'];
+        $params = $this->requestService->getDataTableQueryParameters($request);
 
         $categories = $this->categoryService->getPaginatedCategories(
-            (int) $params['start'], 
-            (int) $params['length'],
-            $orderBy, 
-            $orderDir,
-            $params['search']['value']
+            $params
         );
 
         $transformer = function (Category $category){
@@ -122,7 +117,7 @@ class CategoriesController
             $response,
             [
                 'data' => array_map($transformer, (array) $categories->getIterator()),
-                'draw' => (int) $params['draw'],
+                'draw' => $params->draw,
                 'recordsTotal' => $totalCategories,
                 'recordsFiltered' => $totalCategories,
             ]

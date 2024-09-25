@@ -34,4 +34,21 @@ class RequestService
     {
         return $request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
     }
+
+    public function getDataTableQueryParameters(ServerRequestInterface $request): DataTableQueryParams
+    {
+        $params = $request->getQueryParams();
+
+        $orderBy = $params['columns'][$params['order'][0]['column']]['data'];
+        $orderDir = $params['order'][0]['dir'];
+
+        return new DataTableQueryParams(
+            (int) $params['start'], 
+            (int) $params['length'],
+            $orderBy, 
+            $orderDir,
+            $params['search']['value'],
+            (int) $params['draw']
+        );
+    }
 }
