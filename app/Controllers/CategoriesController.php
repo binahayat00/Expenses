@@ -113,14 +113,11 @@ class CategoriesController
 
         $totalCategories = count($categories);
 
-        return $this->responseFormatter->asJson(
+        return $this->responseFormatter->asDataTable(
             $response,
-            [
-                'data' => array_map($transformer, (array) $categories->getIterator()),
-                'draw' => $params->draw,
-                'recordsTotal' => $totalCategories,
-                'recordsFiltered' => $totalCategories,
-            ]
+            array_map($transformer, (array) $categories->getIterator()),
+            $params->draw,
+            $totalCategories,
             );
 
     }
