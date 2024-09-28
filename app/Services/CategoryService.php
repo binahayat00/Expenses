@@ -94,4 +94,12 @@ class CategoryService
 
         return $category;
     }
+
+    public function getCategoryName(): array
+    {
+        return $this->entityManager->getRepository(Category::class)->createQueryBuilder('c')
+            ->select('c.id', 'c.name')
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Controllers\CategoriesController;
+use App\Controllers\TransactionController;
 use App\Middleware\GuestMiddleware;
 use Slim\App;
 use App\Middleware\AuthMiddleware;
@@ -30,5 +31,9 @@ return function (App $app) {
         $categories->get('/{id:[0-9]+}', [CategoriesController::class, 'get']);
         $categories->post('/{id:[0-9]+}', [CategoriesController::class, 'update']);
     })->add(AuthMiddleware::class);
+
+    $app->group('/transactions', function(RouteCollectorProxy $transactions){
+        $transactions->get('/load', [TransactionController::class, 'load']);
+    });
 
 };

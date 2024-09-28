@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 use App\Contracts\SessionInterface;
+use App\DataObjects\DataTableQueryParams;
 use Psr\Http\Message\ServerRequestInterface;
 
 class RequestService
