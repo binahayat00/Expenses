@@ -33,7 +33,12 @@ return function (App $app) {
     })->add(AuthMiddleware::class);
 
     $app->group('/transactions', function(RouteCollectorProxy $transactions){
+        $transactions->get('', [TransactionController::class, 'index']);
         $transactions->get('/load', [TransactionController::class, 'load']);
+        $transactions->post('', [TransactionController::class, 'store']);
+        $transactions->delete('/{id:[0-9]+}', [TransactionController::class, 'delete']);
+        $transactions->get('/{id:[0-9]+}', [TransactionController::class, 'get']);
+        $transactions->post('/{id:[0-9]+}', [TransactionController::class, 'update']);
     });
 
 };
