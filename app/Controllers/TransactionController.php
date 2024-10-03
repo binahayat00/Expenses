@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Controllers;
+use App\Entity\Transaction;
 use DateTime;
 use Slim\Views\Twig;
 use App\ResponseFormatter;
@@ -18,14 +19,13 @@ use App\RequestValidators\TransactionRequestValidator;
 class TransactionController
 {
     public function __construct(
-        private readonly Twig $twig, 
+        private readonly Twig $twig,
         private readonly ResponseFormatter $responseFormatter,
         private readonly RequestService $requestService,
         private readonly CategoryService $categoryService,
         private readonly TransactionService $transactionService,
         private readonly RequestValidatorFactory $requestValidatorFactory,
-    )
-    {
+    ) {
     }
 
     public function index(Request $request, Response $response)
@@ -33,7 +33,7 @@ class TransactionController
         return $this->twig->render(
             $response,
             'transactions/index.twig',
-            ['categories' => $this->categoryService->getCategoryName()] 
+            ['categories' => $this->categoryService->getCategoryName()]
         );
     }
 
@@ -56,5 +56,76 @@ class TransactionController
         return $response;
     }
 
-    
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        $this->transactionService->delete((int) $args['id']);
+
+        return $response;
+    }
+
+    public function get(Request $request, Response $response, array $args): Response
+    {
+        $transction = $this->transactionService->getById((int) $args['id']);
+
+        if (!$transction) {
+            return $response->withStatus(404);
+        }
+
+        $data = [
+            'id' => $transction->getId(),
+            'description' => $transction->getDescription(),
+            'amount' => $transction->getAmount(),
+            'date' => $transction->getDate(),
+            'category' => $transction->getCategory(),
+        ];
+
+        return $this->responseFormatter->asJson($response, $data);
+    }
+
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        $data = $this->requestValidatorFactory->make(TransactionRequestValidator::class)->validate(
+            $args + $request->getParsedBody()
+        );
+
+        $id = (int) $data['id'];
+
+        if (!$id || !($transaction = $this->transactionService->getById($id))) {
+            return $response->withStatus(404);
+        }
+
+        $this->transactionService->update(
+            $transaction,
+            new TransactionData(
+                $data['description'],
+                (float) $data['amount'],
+                new DateTime($data['date']),
+                $data['category']
+            )
+        );
+    }
+
+    public function load(Request $request, Response $response): Response
+    {
+        $params = $this->requestService->getDataTableQueryParameters($request);
+        $transactions = $this->transactionService->getPaginatedTransactions($params);
+        $transformer = function (Transaction $transaction) {
+            return [
+                'id' => $transaction->getId(),
+                'description' => $transaction->getDescription(),
+                'amount' => $transaction->getAmount(),
+                'date' => $transaction->getDate()->format('m/d/Y g:i A'),
+                'category' => $transaction->getCategory()->getName(),
+            ];
+        };
+
+        $totalTransactions = count($transactions);
+
+        return $this->responseFormatter->asDataTable(
+            $response,
+            array_map($transformer, (array) $transactions->getIterator()),
+            $params->draw,
+            $totalTransactions
+        );
+    }
 }

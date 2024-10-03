@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\DataObjects;
+
 use DateTime;
 use App\Entity\Category;
 
