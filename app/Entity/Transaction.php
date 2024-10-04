@@ -16,6 +16,8 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 #[Entity, Table('transactions')]
 class Transaction
 {
+    use HasTimestamps;
+      
     #[Id, Column(options: ['unsigned' => true]), GeneratedValue]
     private int $id;
 
