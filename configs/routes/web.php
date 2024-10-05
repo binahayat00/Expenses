@@ -39,6 +39,6 @@ return function (App $app) {
         $transactions->delete('/{id:[0-9]+}', [TransactionController::class, 'delete']);
         $transactions->get('/{id:[0-9]+}', [TransactionController::class, 'get']);
         $transactions->post('/{id:[0-9]+}', [TransactionController::class, 'update']);
-    });
+    })->add(AuthMiddleware::class);
 
 };
