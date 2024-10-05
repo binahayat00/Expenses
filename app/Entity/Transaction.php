@@ -2,18 +2,21 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
+use App\Entity\Traits\HasTimestamps;
 use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity, Table('transactions')]
+#[HasLifecycleCallbacks]
 class Transaction
 {
     use HasTimestamps;
@@ -55,7 +58,6 @@ class Transaction
         return $this->id;
     }
 
-
     public function getDescription(): string
     {
         return $this->description;
@@ -88,30 +90,6 @@ class Transaction
     public function setAmount(float $amount): Transaction
     {
         $this->amount = $amount;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): \DateTime
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTime $createdAt): Transaction
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): \DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTime $updatedAt): Transaction
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }
