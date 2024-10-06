@@ -22,7 +22,7 @@ window.addEventListener('DOMContentLoaded', function(){
                     }
                 ).format(row.amount)
             },
-            {data: 'category', sortable: false},
+            {data: 'category'},
             {data: "date"},
             {
                 sortable: false,
@@ -77,7 +77,7 @@ window.addEventListener('DOMContentLoaded', function(){
             })
     })
 
-    this.document.querySelector('.save-transaction-btn').addEventListener('click', function(event){
+    document.querySelector('.save-transaction-btn').addEventListener('click', function(event){
         const transactionId = event.currentTarget.getAttribute('data-id')
 
         post(`/transactions/${ transactionId }`, getTransactionFormData(editTransactionModal), editTransactionModal._element)
@@ -95,14 +95,15 @@ function getTransactionFormData(modal)
 {
     let data = {}
     const fields = [
-        ...modal._element.getElementByTagName('input'),
-        ...modal._element.getElementByTagName('select')
+        ...modal._element.getElementsByTagName('input'),
+        ...modal._element.getElementsByTagName('select')
     ]
 
     fields.forEach(select => {
-        data[select.name] = select.value
+        Object.keys(select).forEach(key => {
+            data[select[key].name] = select[key].value
+        })
     })
-
     return data
 }
 

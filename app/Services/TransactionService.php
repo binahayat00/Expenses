@@ -3,10 +3,11 @@
 declare(strict_types=1);
 
 namespace App\Services;
-use App\DataObjects\DataTableQueryParams;
-use App\DataObjects\TransactionData;
+use App\Entity\User;
 use App\Entity\Transaction;
 use Doctrine\ORM\EntityManager;
+use App\DataObjects\TransactionData;
+use App\DataObjects\DataTableQueryParams;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class TransactionService
@@ -21,7 +22,7 @@ class TransactionService
 
         $transaction->setUser($user);
 
-        return $user->update($transaction, $transactionData);
+        return $this->update($transaction, $transactionData);
     }
 
     public function getPaginatedTransactions(DataTableQueryParams $params): Paginator
@@ -29,10 +30,11 @@ class TransactionService
         $query = $this->entityManager
             ->getRepository(Transaction::class)
             ->createQueryBuilder('t')
+            ->leftJoin('t.category','c')
             ->setFirstResult($params->start)
             ->setMaxResults($params->length);
 
-        $orderBy = in_array($params->orderBy, ['description','amount','date'])
+        $orderBy = in_array($params->orderBy, ['description','amount','date', 'category'])
             ? $params->orderBy
             : 'date';
         $orderDir = strtolower($params->orderDir) === 'asc' ? 'asc' : 'desc';
@@ -42,7 +44,15 @@ class TransactionService
                 ->setParameter('description', '%' . addcslashes($params->searchTerm, '%_') . '%');
         }
 
-        $query->orderBy('t.' . $orderBy, $orderDir);
+        if($orderBy === 'category')
+        {
+            $query->orderBy('c.name', $orderDir);
+        }
+        else{
+            $query->orderBy('t.' . $orderBy, $orderDir);
+        }
+
+        error_log($query->getQuery()->getSQL());
 
         return new Paginator($query);
     }
