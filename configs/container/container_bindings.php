@@ -12,11 +12,13 @@ use Slim\Views\Twig;
 use App\Enum\SameSite;
 use function DI\create;
 use Doctrine\ORM\ORMSetup;
+use App\Enum\StorageDriver;
 use App\Enum\AppEnvironment;
 use Slim\Factory\AppFactory;
 use Doctrine\ORM\EntityManager;
 use App\Contracts\AuthInterface;
 use Doctrine\DBAL\DriverManager;
+use League\Flysystem\Filesystem;
 use App\DataObjects\SessionConfig;
 use Twig\Extra\Intl\IntlExtension;
 use App\Contracts\SessionInterface;
@@ -28,6 +30,7 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use App\Contracts\UserProviderServiceInterface;
 use Symfony\Bridge\Twig\Extension\AssetExtension;
 use App\RequestValidators\RequestValidatorFactory;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use App\Contracts\RequestValidatorFactoryInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
@@ -101,5 +104,13 @@ return [
     'csrf' => fn(ResponseFactoryInterface $responseFactory, Csrf $csrf) => new Guard(
         $responseFactory,
         failureHandler: $csrf->failureHandler(),
-        persistentTokenMode: true),
+        persistentTokenMode: true
+    ),
+    Filesystem::class => function (Config $config) {
+        $adapter = match($config->get('storage.driver')) {
+            StorageDriver::Local => new LocalFilesystemAdapter(STORAGE_PATH),
+        };
+
+        return new League\Flysystem\Filesystem($adapter);
+    }
 ];

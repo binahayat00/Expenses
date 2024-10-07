@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enum\StorageDriver;
 use App\Enum\AppEnvironment;
 
 $appEnv = $_ENV['APP_ENV'] ?? AppEnvironment::Production->value;
@@ -33,5 +34,8 @@ return [
         'secure' => true,
         'httponly' => true,
         'samesite' => 'lax'
+    ],
+    'storage' => [
+        'driver' => StorageDriver::Local,
     ]
 ];

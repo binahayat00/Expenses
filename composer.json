@@ -25,6 +25,7 @@
         "doctrine/dbal": "^4.0",
         "doctrine/migrations": "^3.8",
         "doctrine/orm": "^3.2",
+        "league/flysystem": "^3.0",
         "php-di/php-di": "^7.0",
         "slim/csrf": "^1.5",
         "slim/psr7": "^1.7",
