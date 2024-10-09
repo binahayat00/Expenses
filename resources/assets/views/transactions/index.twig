@@ -12,11 +12,13 @@
 	<div class="transactions container content-body">
 		<div class="text-end mb-4">
 			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTransactionModal">
-				<i class="bi bi-plus-circle me-1">New Transaction</i>
+				<i class="bi bi-plus-circle me-1"></i>
+				New Transaction
 			</button>
 		</div>
-		{% include "transactions/transaction_modal.twig" with {modal: {title: 'Create Transaction', id: 'newTransactionModal', isEdit: false}} %}
-		{% include "transactions/transaction_modal.twig" with {modal: {title: 'Edit Transaction', id: 'editTransactionModal', isEdit: true}} %}
+		{% include 'transactions/transaction_modal.twig' with {modal: {title: 'Create Transaction', id: 'newTransactionModal', isEdit: false}} %}
+		{% include 'transactions/transaction_modal.twig' with {modal: {title: 'Edit Transaction', id: 'editTransactionModal', isEdit: true}} %}
+		{% include 'transactions/upload_receipt_modal.twig' %}
 		<div>
 			<table id="transactionsTable">
 				<thead>
@@ -28,7 +30,6 @@
 						<th>Actions</th>
 					</tr>
 				</thead>
-				<thead></thead>
 				<tbody></tbody>
 			</table>
 		</div>

@@ -71,7 +71,7 @@ window.addEventListener('DOMContentLoaded', function(){
             const transactionId = uploadReceiptBtn.getAttribute('data-id')
             
             uploadReceiptModal._element
-                            .querySelector('.upload-recept-btn')
+                            .querySelector('.upload-receipt-btn')
                             .setAttribute('data-id', transactionId)
             
             uploadReceiptModal.show()
@@ -103,7 +103,7 @@ window.addEventListener('DOMContentLoaded', function(){
             })
     })
 
-    this.document.querySelector('.upload-receipt-btn').addEventListener('click', function(event){
+    document.querySelector('.upload-receipt-btn').addEventListener('click', function(event){
         const transactionId = event.currentTarget.getAttribute('data-id')
         const formData = new FormData();
         const files = uploadReceiptModal._element.querySelector('input[type="file"]').files;

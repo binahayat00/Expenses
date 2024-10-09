@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Controllers\CategoriesController;
+use App\Controllers\ReceiptController;
 use App\Controllers\TransactionController;
 use App\Middleware\GuestMiddleware;
 use Slim\App;
@@ -39,6 +40,7 @@ return function (App $app) {
         $transactions->delete('/{id:[0-9]+}', [TransactionController::class, 'delete']);
         $transactions->get('/{id:[0-9]+}', [TransactionController::class, 'get']);
         $transactions->post('/{id:[0-9]+}', [TransactionController::class, 'update']);
+        $transactions->post('/{id:[0-9]+}/receipts', [ReceiptController::class, 'store']);
     })->add(AuthMiddleware::class);
 
 };

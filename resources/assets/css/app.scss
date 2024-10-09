@@ -1,7 +1,6 @@
 @import "./variables.scss";
 @import "~bootstrap/scss/bootstrap";
 @import "~bootstrap-icons/font/bootstrap-icons";
-
 @import "~datatables.net-dt/css/dataTables.dataTables.css";
 
 * {
@@ -25,7 +24,8 @@ svg.icon {
     color: #57585A !important;
   }
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     color: #57585A !important;
   }
 }
