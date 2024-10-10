@@ -7,6 +7,7 @@ use finfo;
 use App\Exception\ValidationException;
 use Psr\Http\Message\UploadedFileInterface;
 use App\Contracts\RequestValidatorInterface;
+use League\MimeTypeDetection\FinfoMimeTypeDetector;
 
 class UploadReceiptRequestValidator implements RequestValidatorInterface
 {
@@ -35,13 +36,12 @@ class UploadReceiptRequestValidator implements RequestValidatorInterface
 
         $filename = $uploadedFile->getClientFilename();
 
-        if(! preg_match('/^[a-zA-Z0-9\s._-]+$/', $filename))
+        if(! preg_match('/^[a-zA-Z0-9\s\(\)._-]+$/', $filename))
         {
             throw new ValidationException(['receipt' => 'An invalid file name !']);
         }
 
         $allowedMimeTypes = ['image/jpeg','image/png','application/pdf'];
-        $allowedExtensions = ['pdf', 'png', 'jpeg', 'jpg'];
         $tmpFilePath = $uploadedFile->getStream()->getMetadata('uri');
 
         if(! in_array($uploadedFile->getClientMediaType(), $allowedMimeTypes))
@@ -49,26 +49,14 @@ class UploadReceiptRequestValidator implements RequestValidatorInterface
             throw new ValidationException(['receipt' => 'The Receipt has to be either an image or a PDF document!']);
         }
 
-        if(! in_array($this->getExtension($tmpFilePath), $allowedExtensions))
-        {
-            throw new ValidationException(['receipt' => 'The Receipt has to be one of the following files: "png", "jpg", "jpeg" or "PDF" !']);
-        }
+        $detector = new FinfoMimeTypeDetector();
+        $mimeType = $detector->detectMimeType($tmpFilePath, $uploadedFile->getStream()->getContents());
 
-        if(! in_array($this->getMimeType($tmpFilePath), $allowedMimeTypes))
+        if(! in_array($mimeType, $allowedMimeTypes))
         {
             throw new ValidationException(['receipt' => 'An invalid file type!']);
         }
         
         return $data;
-    }
-
-    private function getExtension(string $path): string   
-    {
-        return (new finfo(FILEINFO_EXTENSION))->file($path) ?: '';
-    }
-
-    private function getMimeType(string $path): string   
-    {
-        return (new finfo(FILEINFO_MIME_TYPE))->file($path) ?: '';
     }
 }
