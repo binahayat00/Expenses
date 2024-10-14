@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Entity\Receipt;
 use App\ResponseFormatter;
 use App\Services\ReceiptService;
 use League\Flysystem\Filesystem;
@@ -12,6 +13,7 @@ use App\Contracts\RequestValidatorFactoryInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\RequestValidators\UploadReceiptRequestValidator;
+use Slim\Psr7\Stream;
 
 
 class ReceiptController
@@ -44,8 +46,43 @@ class ReceiptController
 
         $this->filesystem->write("receipts/$randomFilename", $file->getStream()->getContents());
 
-        $this->receiptService->create($transaction, $filename,$randomFilename);
+        $this->receiptService->create($transaction, $filename,$randomFilename, $file->getClientMediaType());
 
         return $this->responseFormatter->asJson( $response, $response);
+    }
+
+    public function download(Request $request, Response $response, array $args): Response
+    {
+        $transactionId = $args['transactionId'];
+        $receiptId = $args['id'];
+
+        if(! $transactionId || ! ($this->transactionService->getById($transactionId))){
+            return $response->withStatus(404);
+        }
+
+        if(! $receiptId || ! ($receipt = $this->receiptService->getById($receiptId))){
+            return $response->withStatus(404);
+        }
+
+        if($receipt->getTransaction()->getId() !== $transactionId)
+        {
+            return $response->withStatus(401);
+        }
+
+        $file = $this->filesystem->readStream("receipts/" . $receipt->getStorageFilename());
+        
+        $response = $response->withHeader(
+            'Content-Disposition',
+            'inline; filename="' . $receipt->getFilename() . '"'
+        )->withHeader('Content-Type',$receipt->getMediaType());
+
+        return $response->withBody(new Stream($file));
+    }
+
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        // TODO
+
+        return $response;
     }
 }

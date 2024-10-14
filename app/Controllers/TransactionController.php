@@ -3,10 +3,11 @@
 declare(strict_types=1);
 
 namespace App\Controllers;
-use App\Entity\Transaction;
 use DateTime;
 use Slim\Views\Twig;
+use App\Entity\Receipt;
 use App\ResponseFormatter;
+use App\Entity\Transaction;
 use App\Services\RequestService;
 use App\Services\CategoryService;
 use App\DataObjects\TransactionData;
@@ -116,6 +117,10 @@ class TransactionController
                 'amount' => $transaction->getAmount(),
                 'date' => $transaction->getDate()->format('m/d/Y g:i A'),
                 'category' => $transaction->getCategory()->getName(),
+                'receipts' => $transaction->getReceipts()->map(fn(Receipt $receipt) => [
+                    'name' => $receipt->getFilename(),
+                    'id' => $receipt->getId(),
+                ])->toArray(),
             ];
         };
 
