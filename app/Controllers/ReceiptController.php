@@ -53,14 +53,14 @@ class ReceiptController
 
     public function download(Request $request, Response $response, array $args): Response
     {
-        $transactionId = $args['transactionId'];
-        $receiptId = $args['id'];
+        $transactionId = (int) $args['transactionId'];
+        $receiptId = (int) $args['id'];
 
         if(! $transactionId || ! ($this->transactionService->getById($transactionId))){
             return $response->withStatus(404);
         }
 
-        if(! $receiptId || ! ($receipt = $this->receiptService->getById($receiptId))){
+        if(! $receiptId || ! ($receipt = $this->receiptService->getById((int) $receiptId))){
             return $response->withStatus(404);
         }
 
