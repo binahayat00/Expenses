@@ -30,25 +30,23 @@ class TransactionService
         $query = $this->entityManager
             ->getRepository(Transaction::class)
             ->createQueryBuilder('t')
-            ->leftJoin('t.category','c')
+            ->leftJoin('t.category', 'c')
             ->setFirstResult($params->start)
             ->setMaxResults($params->length);
 
-        $orderBy = in_array($params->orderBy, ['description','amount','date', 'category'])
+        $orderBy = in_array($params->orderBy, ['description', 'amount', 'date', 'category'])
             ? $params->orderBy
             : 'date';
         $orderDir = strtolower($params->orderDir) === 'asc' ? 'asc' : 'desc';
 
-        if(! empty($params->searchTerm)){
+        if (!empty($params->searchTerm)) {
             $query->where('t.description LIKE :description')
                 ->setParameter('description', '%' . addcslashes($params->searchTerm, '%_') . '%');
         }
 
-        if($orderBy === 'category')
-        {
+        if ($orderBy === 'category') {
             $query->orderBy('c.name', $orderDir);
-        }
-        else{
+        } else {
             $query->orderBy('t.' . $orderBy, $orderDir);
         }
 
@@ -67,7 +65,14 @@ class TransactionService
 
     public function getById(int $id): ?Transaction
     {
-        return $this->entityManager->find(Transaction::class, $id);
+        $query = $this->entityManager->getRepository(Transaction::class)
+            ->createQueryBuilder('t')
+            ->leftJoin('t.category', 'c');
+
+        error_log($query->getQuery()->getSQL());
+        error_log(implode(',',$query->getQuery()->getArrayResult()));
+
+        return $query->getQuery()->getOneOrNullResult();
     }
 
     public function update(Transaction $transaction, TransactionData $transactionData)

@@ -66,21 +66,21 @@ class TransactionController
 
     public function get(Request $request, Response $response, array $args): Response
     {
-        $transction = $this->transactionService->getById((int) $args['id']);
+        $transaction = $this->transactionService->getById((int) $args['id']);
 
-        if (!$transction) {
+        if (!$transaction) {
             return $response->withStatus(404);
         }
 
         $data = [
-            'id' => $transction->getId(),
-            'description' => $transction->getDescription(),
-            'amount' => $transction->getAmount(),
-            'date' => $transction->getDate(),
-            'category' => $transction->getCategory(),
+            'id' => $transaction->getId(),
+            'description' => $transaction->getDescription(),
+            'amount' => $transaction->getAmount(),
+            'date' => $transaction->getDate(),
+            'category' => $transaction->getCategory(),
         ];
 
-        return $this->responseFormatter->asJson($response, $data);
+        return $this->responseFormatter->asJson($response, [$data]);
     }
 
     public function update(Request $request, Response $response, array $args): Response
@@ -95,7 +95,7 @@ class TransactionController
             return $response->withStatus(404);
         }
 
-        $this->transactionService->update(
+        $result = $this->transactionService->update(
             $transaction,
             new TransactionData(
                 $data['description'],
@@ -104,6 +104,8 @@ class TransactionController
                 $data['category']
             )
         );
+
+        return $this->responseFormatter->asJson($response,$result);
     }
 
     public function load(Request $request, Response $response): Response
@@ -132,5 +134,10 @@ class TransactionController
             $params->draw,
             $totalTransactions
         );
+    }
+
+    public function upload(Request $request, Response $response): Response
+    {
+        return $this->responseFormatter->asJson($response,$request);
     }
 }

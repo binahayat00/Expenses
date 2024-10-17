@@ -2,10 +2,13 @@ import { Modal } from "bootstrap"
 import { get, post, del } from "./ajax"
 import DataTable from "datatables.net"
 
+import "../css/transactions.scss"
+
 window.addEventListener('DOMContentLoaded', function(){
     const newTransactionModal = new Modal(document.getElementById('newTransactionModal'))
     const editTransactionModal = new Modal(document.getElementById('editTransactionModal'))
     const uploadReceiptModal = new Modal(document.getElementById('uploadReceiptModal'))
+    // const newCsvTransactionModal = new Modal(document.getElementById('newCsvTransactionModal'))
 
     const table = new DataTable('#transactionsTable', {
         serverSide: true,
@@ -136,6 +139,18 @@ window.addEventListener('DOMContentLoaded', function(){
                 }
             })
     })
+
+    // this.document.querySelector('.').addEventListener('click', function(event){
+    //     post(`/transactions/upload`, getTransactionFormData(newCsvTransactionModal), newCsvTransactionModal._element)
+    //         .then(response => {
+    //             if(response.ok)
+    //             {
+    //                 table.draw()
+
+    //                 newCsvTransactionModal.hide()
+    //             }
+    //         })
+    // })
 
     document.querySelector('.save-transaction-btn').addEventListener('click', function(event){
         const transactionId = event.currentTarget.getAttribute('data-id')

@@ -49,5 +49,9 @@ return function (App $app) {
             '/{transactionId:[0-9]+}/receipts/{id:[0-9]+}',
             [ReceiptController::class, 'delete']
         );
+        $transactions->post(
+            '/upload',
+            [TransactionController::class, 'upload']
+        );
     })->add(AuthMiddleware::class);
 };
