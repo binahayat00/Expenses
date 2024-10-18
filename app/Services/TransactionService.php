@@ -63,16 +63,18 @@ class TransactionService
         $this->entityManager->flush();
     }
 
-    public function getById(int $id): ?Transaction
+    public function getById(int $id)//: ?Transaction
     {
-        $query = $this->entityManager->getRepository(Transaction::class)
+        $query = $this->entityManager
+            ->getRepository(Transaction::class)
             ->createQueryBuilder('t')
-            ->leftJoin('t.category', 'c');
+            ->leftJoin('t.category', 'c')
+            ->setMaxResults(10);
 
         error_log($query->getQuery()->getSQL());
-        error_log(implode(',',$query->getQuery()->getArrayResult()));
+        error_log(print_r($query->where("t.id = $id"),true));
 
-        return $query->getQuery()->getOneOrNullResult();
+        return $query;
     }
 
     public function update(Transaction $transaction, TransactionData $transactionData)
