@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 use App\Entity\User;
 use App\Entity\Transaction;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use App\DataObjects\TransactionData;
 use App\DataObjects\DataTableQueryParams;
@@ -68,13 +69,15 @@ class TransactionService
         $query = $this->entityManager
             ->getRepository(Transaction::class)
             ->createQueryBuilder('t')
-            ->leftJoin('t.category', 'c')
-            ->setMaxResults(10);
+            ->leftJoin('t.category', 'c');
+            // ->setMaxResults(10);
 
-        error_log($query->getQuery()->getSQL());
-        error_log(print_r($query->where("t.id = $id"),true));
-
-        return $query;
+        // $transaction = $query->where("t.id = :id")->setParameter('id',$id)->getQuery()->getResult()[0];
+        // error_log($query->getQuery()->getSQL());
+        $transaction = $this->entityManager->find( Transaction::class, $id);
+        error_log(print_r($transaction->getCategory()->getId()/*->toIterable()*/,true));
+        //getIterator toIterable
+        return $query->getQuery()->getResult()[0];
     }
 
     public function update(Transaction $transaction, TransactionData $transactionData)

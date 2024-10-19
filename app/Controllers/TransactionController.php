@@ -77,10 +77,10 @@ class TransactionController
             'description' => $transaction->getDescription(),
             'amount' => $transaction->getAmount(),
             'date' => $transaction->getDate(),
-            'category' => $transaction->getCategory(),
+            'category' => $transaction->getCategory()->getId(),
         ];
 
-        return $this->responseFormatter->asJson($response, [$data]);
+        return $this->responseFormatter->asJson($response, $data);
     }
 
     public function update(Request $request, Response $response, array $args): Response
