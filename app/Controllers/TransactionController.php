@@ -76,7 +76,7 @@ class TransactionController
             'id' => $transaction->getId(),
             'description' => $transaction->getDescription(),
             'amount' => $transaction->getAmount(),
-            'date' => $transaction->getDate(),
+            'date' => $transaction->getDate()->format('Y-m-d H:i:s'),
             'category' => $transaction->getCategory()->getId(),
         ];
 
