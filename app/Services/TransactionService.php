@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 use App\Entity\User;
 use App\Entity\Transaction;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use App\DataObjects\TransactionData;
 use App\DataObjects\DataTableQueryParams;
