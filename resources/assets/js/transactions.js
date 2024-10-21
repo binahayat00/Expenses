@@ -140,8 +140,16 @@ window.addEventListener('DOMContentLoaded', function(){
             })
     })
 
-    this.document.querySelector('.').addEventListener('click', function(event){
-        post(`/transactions/upload`, getTransactionFormData(importTransactionModal), importTransactionModal._element)
+    this.document.querySelector('.import-transaction-btn').addEventListener('click', function(event){
+        const formData = new FormData();
+        const files = importTransactionModal._element.querySelector('input[type="file"]');
+
+        for (let i = 0; i < files.length; i++)
+        {
+            formData.append('transaction',files[i]);
+        }
+
+        post(`/transactions/upload`, formData, importTransactionModal._element)
             .then(response => {
                 if(response.ok)
                 {

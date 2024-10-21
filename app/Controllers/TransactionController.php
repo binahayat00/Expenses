@@ -138,6 +138,7 @@ class TransactionController
 
     public function upload(Request $request, Response $response): Response
     {
+        var_dump($request->getUploadedFiles());//['transaction']
         return $this->responseFormatter->asJson($response,$request);
     }
 }
