@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-use App\Controllers\CategoriesController;
-use App\Controllers\ReceiptController;
-use App\Controllers\TransactionController;
-use App\Middleware\GuestMiddleware;
 use Slim\App;
 use App\Middleware\AuthMiddleware;
 use App\Controllers\AuthController;
 use App\Controllers\HomeController;
+use App\Middleware\GuestMiddleware;
 use Slim\Routing\RouteCollectorProxy;
+use App\Controllers\ReceiptController;
+use App\Controllers\CategoriesController;
+use App\Controllers\TransactionController;
+use App\Controllers\TransactionImporterController;
 
 return function (App $app) {
     $app->get('/', [HomeController::class, 'index'])->add(AuthMiddleware::class);
@@ -50,8 +51,8 @@ return function (App $app) {
             [ReceiptController::class, 'delete']
         );
         $transactions->post(
-            '/upload',
-            [TransactionController::class, 'upload']
+            '/import',
+            [TransactionImporterController::class, 'import']
         );
     })->add(AuthMiddleware::class);
 };

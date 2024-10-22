@@ -142,15 +142,33 @@ window.addEventListener('DOMContentLoaded', function(){
 
     this.document.querySelector('.import-transaction-btn').addEventListener('click', function(event){
         const formData = new FormData();
-        const files = importTransactionModal._element.querySelector('input[type="file"]');
+        const button = event.currentTarget
+        const files = importTransactionModal._element.querySelector('input[type="file"]').files;
 
         for (let i = 0; i < files.length; i++)
         {
             formData.append('transaction',files[i]);
         }
 
-        post(`/transactions/upload`, formData, importTransactionModal._element)
+        button.setAttribute('disabled', true);
+
+        button.innerHTML = `
+            <div class="spinner-grow spinner-grow-sm text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow spinner-grow-sm text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow spinner-grow-sm text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        `
+
+        post(`/transactions/import`, formData, importTransactionModal._element)
             .then(response => {
+                button.removeAttribute('disabled')
+                button.innerHTML = btnHtml
+
                 if(response.ok)
                 {
                     table.draw()
