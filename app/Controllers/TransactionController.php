@@ -118,7 +118,7 @@ class TransactionController
                 'description' => $transaction->getDescription(),
                 'amount' => $transaction->getAmount(),
                 'date' => $transaction->getDate()->format('m/d/Y g:i A'),
-                'category' => $transaction->getCategory()->getName(),
+                'category' => $transaction->getCategory()?->getName(),
                 'receipts' => $transaction->getReceipts()->map(fn(Receipt $receipt) => [
                     'name' => $receipt->getFilename(),
                     'id' => $receipt->getId(),
@@ -134,11 +134,5 @@ class TransactionController
             $params->draw,
             $totalTransactions
         );
-    }
-
-    public function upload(Request $request, Response $response): Response
-    {
-        var_dump($request->getUploadedFiles());//['transaction']
-        return $this->responseFormatter->asJson($response,$request);
     }
 }

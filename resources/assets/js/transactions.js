@@ -152,6 +152,8 @@ window.addEventListener('DOMContentLoaded', function(){
 
         button.setAttribute('disabled', true);
 
+        const btnHtml = button.innerHTML
+
         button.innerHTML = `
             <div class="spinner-grow spinner-grow-sm text-light" role="status">
                 <span class="visually-hidden">Loading...</span>
