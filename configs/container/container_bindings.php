@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Auth;
 use App\Csrf;
+use Clockwork\DataSource\DoctrineDataSource;
+use Clockwork\Storage\FileStorage;
 use Slim\App;
 use App\Config;
 use App\Session;
@@ -11,6 +13,7 @@ use Slim\Csrf\Guard;
 use Slim\Views\Twig;
 use App\Enum\SameSite;
 use function DI\create;
+use Clockwork\Clockwork;
 use Doctrine\ORM\ORMSetup;
 use App\Enum\StorageDriver;
 use App\Enum\AppEnvironment;
@@ -112,5 +115,14 @@ return [
         };
 
         return new League\Flysystem\Filesystem($adapter);
+    },
+
+    Clockwork::class => function(EntityManager $entityManager) {
+        $clockwork = new Clockwork();
+
+        $clockwork->storage(new FileStorage(STORAGE_PATH . '/clockwork'));
+        $clockwork->addDataSource(new DoctrineDataSource($entityManager));
+        
+        return $clockwork;
     }
 ];
