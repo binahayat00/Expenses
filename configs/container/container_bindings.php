@@ -121,7 +121,7 @@ return [
         $clockwork = new Clockwork();
 
         $clockwork->storage(new FileStorage(STORAGE_PATH . '/clockwork'));
-        $clockwork->addDataSource(new DoctrineDataSource($entityManager));
+        // $clockwork->addDataSource(new DoctrineDataSource($entityManager));
         
         return $clockwork;
     }
