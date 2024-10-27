@@ -41,6 +41,9 @@ use Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
 use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 
+use Doctrine\DBAL\Logging\SQLLogger;
+
+
 return [
     App::class => function(ContainerInterface $container){
         AppFactory::setContainer($container);
@@ -119,7 +122,8 @@ return [
 
     Clockwork::class => function(EntityManager $entityManager) {
         $clockwork = new Clockwork();
-
+        // new SQLLogger();
+        new Doctrine\Common\Persistence\ObjectManager();
         $clockwork->storage(new FileStorage(STORAGE_PATH . '/clockwork'));
         // $clockwork->addDataSource(new DoctrineDataSource($entityManager));
         
