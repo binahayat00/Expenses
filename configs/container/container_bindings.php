@@ -120,13 +120,20 @@ return [
         return new League\Flysystem\Filesystem($adapter);
     },
 
-    Clockwork::class => function(EntityManager $entityManager) {
+    Clockwork::class => function(EntityManager $entityManager, Config $config) {
         $clockwork = new Clockwork();
-        // new SQLLogger();
-        new Doctrine\Common\Persistence\ObjectManager();
+
+        // new DoctrineDataSource($entityManager);
+
         $clockwork->storage(new FileStorage(STORAGE_PATH . '/clockwork'));
         // $clockwork->addDataSource(new DoctrineDataSource($entityManager));
-        
+        $clockwork->addDataSource($dataSource = new DoctrineDataSource($entityManager));
+        // $configure = ORMSetup::createAttributeMetadataConfiguration(
+        //     paths: $config->get('doctrine.entity_dir'),
+        //     isDevMode: $config->get('doctrine.dev_mode'),
+        // );
+        // $config = $dataSource->configure($configure);
+
         return $clockwork;
     }
 ];

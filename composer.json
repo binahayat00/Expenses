@@ -22,7 +22,7 @@
     },
     "require": {
         "ext-pdo": "*",
-        "doctrine/dbal": "^4.0",
+        "doctrine/dbal": "^4.2",
         "doctrine/migrations": "^3.8",
         "doctrine/orm": "^3.2",
         "itsgoingd/clockwork": "^5.2",
