@@ -128,11 +128,11 @@ return [
         $clockwork->storage(new FileStorage(STORAGE_PATH . '/clockwork'));
         // $clockwork->addDataSource(new DoctrineDataSource($entityManager));
         $clockwork->addDataSource($dataSource = new DoctrineDataSource($entityManager));
-        // $configure = ORMSetup::createAttributeMetadataConfiguration(
-        //     paths: $config->get('doctrine.entity_dir'),
-        //     isDevMode: $config->get('doctrine.dev_mode'),
-        // );
-        // $config = $dataSource->configure($configure);
+        $configure = ORMSetup::createAttributeMetadataConfiguration(
+            paths: $config->get('doctrine.entity_dir'),
+            isDevMode: $config->get('doctrine.dev_mode'),
+        );
+        $config = $dataSource->configure($configure);
 
         return $clockwork;
     }

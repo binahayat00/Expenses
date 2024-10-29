@@ -109,5 +109,16 @@ class CategoryService
             ->findBy(['name' => $name])[0] ?? null;
     }
 
+    public function getAllKeyedByName(): array
+    {
+        $categories = $this->entityManager->getRepository(Category::class)->findAll();
+        $categoryMap = [];
 
+        foreach($categories as $category)
+        {
+            $categoryMap[strtolower($category->getName())] = $category;
+        }
+
+        return $categoryMap;
+    }
 }

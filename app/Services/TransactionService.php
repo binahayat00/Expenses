@@ -30,7 +30,9 @@ class TransactionService
         $query = $this->entityManager
             ->getRepository(Transaction::class)
             ->createQueryBuilder('t')
+            ->select('t','c','r')
             ->leftJoin('t.category', 'c')
+            ->leftJoin('t.receipts','r')
             ->setFirstResult($params->start)
             ->setMaxResults($params->length);
 
@@ -76,7 +78,7 @@ class TransactionService
         $transaction->setCategory($transactionData->category);
 
         $this->entityManager->persist($transaction);
-        $this->entityManager->flush();
+        // $this->entityManager->flush();
 
         return $transaction;
     }
