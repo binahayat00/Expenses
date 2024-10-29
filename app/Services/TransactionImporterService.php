@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Entity\Transaction;
 use App\Entity\User;
 use App\DataObjects\TransactionData;
 use Clockwork\Clockwork;
@@ -30,6 +31,7 @@ class TransactionImporterService
         fgetcsv($resource);
 
         $this->clockwork->log(LogLevel::DEBUG, 'Memory Usage Before: ' . memory_get_usage());
+        $this->clockwork->log(LogLevel::DEBUG, 'Unit Of Work Before: ' . $this->entityManager->getUnitOfWork()->size());
 
         $count = 1;
         $batchSize = 250;
@@ -57,6 +59,7 @@ class TransactionImporterService
 
             if($count % $batchSize === 0){
                 $this->entityManager->flush();
+                $this->entityManager->clear(Transaction::class);
                 
                 $count = 1;
             } else{
@@ -67,8 +70,10 @@ class TransactionImporterService
         if($count > 1)
         {
             $this->entityManager->flush();
+            $this->entityManager->clear();
         }
 
         $this->clockwork->log(LogLevel::DEBUG, 'Memory Usage After: ' . memory_get_usage());
+        $this->clockwork->log(LogLevel::DEBUG, 'Unit Of Work After: ' . $this->entityManager->getUnitOfWork()->size());
     }
 }
