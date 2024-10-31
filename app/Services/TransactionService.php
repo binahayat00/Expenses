@@ -10,11 +10,8 @@ use App\DataObjects\TransactionData;
 use App\DataObjects\DataTableQueryParams;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
-class TransactionService
+class TransactionService extends EntityManagerService
 {
-    public function __construct(private readonly EntityManager $entityManager)
-    {
-    }
 
     public function create(TransactionData $transactionData, User $user): Transaction
     {
@@ -62,7 +59,6 @@ class TransactionService
         $transaction = $this->entityManager->find(Transaction::class, $id);
 
         $this->entityManager->remove($transaction);
-        $this->entityManager->flush();
     }
 
     public function getById(int $id): ?Transaction
@@ -78,7 +74,6 @@ class TransactionService
         $transaction->setCategory($transactionData->category);
 
         $this->entityManager->persist($transaction);
-        // $this->entityManager->flush();
 
         return $transaction;
     }

@@ -48,6 +48,8 @@ class CategoriesController
             $request->getAttribute('user')
         );
 
+        $this->categoryService->flush();
+
         return $response
             ->withHeader('Location', '/categories')
             ->withStatus(302);
@@ -56,7 +58,7 @@ class CategoriesController
     public function delete(Request $request, Response $response, array $args): Response
     {
         $this->categoryService->delete((int) $args['id']);
-
+        $this->categoryService->flush();
         return $response;
     }
 
@@ -91,6 +93,8 @@ class CategoriesController
 
         $update = $this->categoryService->update($category, $data['name']);
 
+        $this->categoryService->flush();
+        
         return $this->responseFormatter->asJson($response, $data);
     }
 
