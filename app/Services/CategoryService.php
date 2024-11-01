@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\DataObjects\DataTableQueryParams;
 use App\Entity\User;
 use App\Entity\Category;
-use Doctrine\ORM\EntityManager;
+use App\Services\EntityManagerService;
+use App\DataObjects\DataTableQueryParams;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class CategoryService extends EntityManagerService

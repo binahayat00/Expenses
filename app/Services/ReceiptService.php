@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services;
 use App\Entity\Receipt;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class ReceiptService extends EntityManagerService
 {
     public function __construct(
-        private readonly EntityManager $entityManager,
+        private readonly EntityManagerInterface $entityManager,
         private readonly Receipt $receipt
     )
     {

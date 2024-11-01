@@ -6,6 +6,7 @@ use App\Auth;
 use App\Csrf;
 use Clockwork\DataSource\DoctrineDataSource;
 use Clockwork\Storage\FileStorage;
+use Doctrine\ORM\EntityManagerInterface;
 use Slim\App;
 use App\Config;
 use App\Session;
@@ -72,7 +73,7 @@ return [
 
         return $twig;
     },
-    EntityManager::class =>  function(Config $config) {
+    EntityManagerInterface::class =>  function(Config $config) {
         $configure = ORMSetup::createAttributeMetadataConfiguration(
             paths: $config->get('doctrine.entity_dir'),
             isDevMode: $config->get('doctrine.dev_mode'),
@@ -120,7 +121,7 @@ return [
         return new League\Flysystem\Filesystem($adapter);
     },
 
-    Clockwork::class => function(EntityManager $entityManager, Config $config) {
+    Clockwork::class => function(EntityManagerInterface $entityManager, Config $config) {
         $clockwork = new Clockwork();
 
         // new DoctrineDataSource($entityManager);

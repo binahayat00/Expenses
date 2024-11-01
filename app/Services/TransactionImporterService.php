@@ -9,7 +9,7 @@ use App\Entity\User;
 use App\DataObjects\TransactionData;
 use Clockwork\Clockwork;
 use Clockwork\Request\LogLevel;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class TransactionImporterService
 {
@@ -17,7 +17,7 @@ class TransactionImporterService
     public function __construct(
         private readonly CategoryService $categoryService,
         private readonly TransactionService $transactionService,
-        private readonly EntityManager $entityManager,
+        private readonly EntityManagerInterface $entityManager,
         private readonly Clockwork $clockwork,
     )
     {
