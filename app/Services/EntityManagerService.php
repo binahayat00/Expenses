@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Entity\Transaction;
 use Doctrine\ORM\EntityManagerInterface;
 
 class EntityManagerService
@@ -34,5 +35,12 @@ class EntityManagerService
         foreach ($entities as $entity) {
             $this->entityManager->detach($entity);
         }    
+    }
+
+    public function toggleReviewed(Transaction $transaction)
+    {
+        $transaction->setWasReviewed(! $transaction->getWasReviewed());
+
+        $this->entityManager->persist($transaction);
     }
 }
