@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', function () {
                         <button type="submit" class="btn btn-outline-primary delete-category-btn" data-id="${ row.id }" >
                             <i class="bi bi-trash3-fill"></i>
                         </button>
-                        <button class="ms-2 btn btn-outline-primary delete-category-btn" data-id="${ row.id }">
+                        <button class="ms-2 btn btn-outline-primary edit-category-btn" data-id="${ row.id }">
                             <i class="bi bi-pencil-fill"></i>
                         </button>
                     </div>
@@ -43,7 +43,7 @@ window.addEventListener('DOMContentLoaded', function () {
             const categoryId = deleteBtn.getAttribute('data-id')
 
             if(confirm('Are you sure want to delete this category?')){
-                del(`/categories/${ categoryId }`).then(() => {
+                del(`/categories/${ categoryId }`).then(response => {
                     if(response.ok)
                     {
                         table.draw()

@@ -59,7 +59,8 @@ class CategoriesController
     {
         $this->categoryService->delete((int) $args['id']);
         $this->categoryService->flush();
-        return $response;
+
+        return $this->responseFormatter->asJson($response, []);
     }
 
     public function get(Request $request, Response $response, array $args): Response

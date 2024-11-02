@@ -9,11 +9,10 @@ use Doctrine\ORM\EntityManagerInterface;
 class ReceiptService extends EntityManagerService
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
+        protected readonly EntityManagerInterface $entityManager,
         private readonly Receipt $receipt
     )
     {
-        parent::__construct($entityManager);
     }
 
     public function create($transaction, string $filename, string $storageFilename, string $mediaType): Receipt
