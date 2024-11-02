@@ -18,4 +18,21 @@ class EntityManagerService
     {
         $this->entityManager->flush();
     }
+
+    public function clear(?string $entityName = null)
+    {
+        if($entityName === null)
+        {
+            $this->entityManager->clear();
+
+            return;
+        }
+
+        $unitOfWork = $this->entityManager->getUnitOfWork();
+        $entities = $unitOfWork->getIdentityMap()[$entityName] ?? [];
+
+        foreach ($entities as $entity) {
+            $this->entityManager->detach($entity);
+        }    
+    }
 }
