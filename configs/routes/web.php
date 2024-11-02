@@ -55,7 +55,7 @@ return function (App $app) {
             [TransactionImporterController::class, 'import']
         );
 
-        $transactions->post('/{id:[0-9]+}', [TransactionController::class, 'toggleReviewed']);
+        $transactions->post('/{id:[0-9]+}/review', [TransactionController::class, 'toggleReviewed']);
 
     })->add(AuthMiddleware::class);
 };
