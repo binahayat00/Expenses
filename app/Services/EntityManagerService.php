@@ -15,9 +15,23 @@ class EntityManagerService
     {
     }
 
-    public function flush(): void
+    public function sync($entity = null): void
     {
+        if($entity)
+        {
+            $this->entityManager->persist($entity);
+        }
+
         $this->entityManager->flush();
+    }
+
+    public function delete($entity, bool $sync = false): void
+    {
+        $this->entityManager->remove($entity);
+        
+        if($sync) {
+            $this->sync();
+        }
     }
 
     public function clear(?string $entityName = null)
