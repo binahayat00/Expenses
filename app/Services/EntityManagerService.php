@@ -15,6 +15,16 @@ class EntityManagerService
     {
     }
 
+    public function __call(string $name, array $arguments)
+    {
+        if(method_exists($this->entityManager, $name))
+        {
+            return call_user_func_array([$this->entityManager, $name], $arguments);
+        }
+
+        throw new \BadMethodCallException('Call to undefined method "' . $name);
+    }
+
     public function sync($entity = null): void
     {
         if($entity)
