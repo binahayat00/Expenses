@@ -7,6 +7,9 @@ namespace App\Services;
 use App\Entity\Transaction;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * @mixin EntityManagerInterface
+ */
 class EntityManagerService
 {
     public function __construct(
@@ -22,7 +25,7 @@ class EntityManagerService
             return call_user_func_array([$this->entityManager, $name], $arguments);
         }
 
-        throw new \BadMethodCallException('Call to undefined method "' . $name);
+        throw new \BadMethodCallException('Call to undefined method "' . $name . '"');
     }
 
     public function sync($entity = null): void
