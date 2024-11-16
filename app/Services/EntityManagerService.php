@@ -6,11 +6,10 @@ namespace App\Services;
 
 use App\Entity\Transaction;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Contracts\EntityManagerServiceInterface;
 
-/**
- * @mixin EntityManagerInterface
- */
-class EntityManagerService
+
+class EntityManagerService implements EntityManagerServiceInterface
 {
     public function __construct(
         protected readonly EntityManagerInterface $entityManager

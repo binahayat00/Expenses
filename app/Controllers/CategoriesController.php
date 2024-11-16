@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controllers;
+use App\Contracts\EntityManagerServiceInterface;
 use App\Entity\Category;
 use App\Services\RequestService;
 use Slim\Views\Twig;
@@ -19,7 +20,8 @@ class CategoriesController
         private readonly RequestValidatorFactoryInterface $requestValidatorFactory,
         private readonly CategoryService $categoryService,
         private readonly RequestService $requestService,
-        private readonly ResponseFormatter $responseFormatter
+        private readonly ResponseFormatter $responseFormatter,
+        private readonly EntityManagerServiceInterface $entityManagerService
         )
     {
     }
@@ -43,12 +45,12 @@ class CategoriesController
                 $request->getParsedBody()
             );
         
-        $this->categoryService->create(
+        $category = $this->categoryService->create(
             $data['name'],
             $request->getAttribute('user')
         );
 
-        $this->categoryService->flush();
+        $this->entityManagerService->sync($category);
 
         return $response
             ->withHeader('Location', '/categories')
@@ -57,8 +59,9 @@ class CategoriesController
 
     public function delete(Request $request, Response $response, array $args): Response
     {
-        $this->categoryService->delete((int) $args['id']);
-        $this->categoryService->flush();
+        $category = $this->categoryService->getById((int) $args['id']);
+
+        $this->entityManagerService->delete($category, true);
 
         return $this->responseFormatter->asJson($response, []);
     }
@@ -92,9 +95,7 @@ class CategoriesController
             return $response->withStatus(404);
         }
 
-        $update = $this->categoryService->update($category, $data['name']);
-
-        $this->categoryService->flush();
+        $this->entityManagerService->sync($this->categoryService->update($category, $data['name']));
         
         return $this->responseFormatter->asJson($response, $data);
     }

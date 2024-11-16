@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 use App\Auth;
 use App\Csrf;
-use Clockwork\DataSource\DoctrineDataSource;
-use Clockwork\Storage\FileStorage;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Services\EntityManagerService;
 use Slim\App;
 use App\Config;
 use App\Session;
@@ -24,14 +22,19 @@ use App\Contracts\AuthInterface;
 use Doctrine\DBAL\DriverManager;
 use League\Flysystem\Filesystem;
 use App\DataObjects\SessionConfig;
+use Clockwork\Storage\FileStorage;
 use Twig\Extra\Intl\IntlExtension;
 use App\Contracts\SessionInterface;
+use Doctrine\DBAL\Logging\SQLLogger;
 use Symfony\Component\Asset\Package;
 use App\Services\UserProviderService;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Asset\Packages;
+use Doctrine\ORM\EntityManagerInterface;
+use Clockwork\DataSource\DoctrineDataSource;
 use Psr\Http\Message\ResponseFactoryInterface;
 use App\Contracts\UserProviderServiceInterface;
+use App\Contracts\EntityManagerServiceInterface;
 use Symfony\Bridge\Twig\Extension\AssetExtension;
 use App\RequestValidators\RequestValidatorFactory;
 use League\Flysystem\Local\LocalFilesystemAdapter;
@@ -39,10 +42,9 @@ use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use App\Contracts\RequestValidatorFactoryInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension;
+
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
 use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
-
-use Doctrine\DBAL\Logging\SQLLogger;
 
 
 return [
@@ -136,5 +138,8 @@ return [
         $config = $dataSource->configure($configure);
 
         return $clockwork;
-    }
+    },
+    EntityManagerServiceInterface::class => fn(EntityManagerInterface $entityManager) => new EntityManagerService(
+    $entityManager
+    ),
 ];

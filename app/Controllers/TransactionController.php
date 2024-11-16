@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Controllers;
+use App\Contracts\EntityManagerServiceInterface;
 use DateTime;
 use Slim\Views\Twig;
 use App\Entity\Receipt;
@@ -26,6 +27,7 @@ class TransactionController
         private readonly CategoryService $categoryService,
         private readonly TransactionService $transactionService,
         private readonly RequestValidatorFactory $requestValidatorFactory,
+        private readonly EntityManagerServiceInterface $entityManagerService
     ) {
     }
 
@@ -44,7 +46,7 @@ class TransactionController
             $request->getParsedBody()
         );
 
-        $this->transactionService->create(
+        $transaction = $this->transactionService->create(
             new TransactionData(
                 $data['description'],
                 (float) $data['amount'],
@@ -53,15 +55,17 @@ class TransactionController
             ),
             $request->getAttribute('user')
         );
-        $this->transactionService->flush();
+
+        $this->entityManagerService->sync($transaction);
 
         return $response;
     }
 
     public function delete(Request $request, Response $response, array $args): Response
     {
-        $this->transactionService->delete((int) $args['id']);
-        $this->transactionService->flush();
+        $transaction = $this->transactionService->getById((int) $args['id']);
+        
+        $this->entityManagerService->delete($transaction, true);
 
         return $response;
     }
@@ -106,7 +110,10 @@ class TransactionController
                 $data['category']
             )
         );
-        $this->transactionService->flush();
+
+        $this->entityManagerService->sync($result);
+
+        $this->entityManagerService->sync();
 
         return $this->responseFormatter->asJson($response,$result);
     }
@@ -149,7 +156,6 @@ class TransactionController
         }
 
         $this->transactionService->toggleReviewed($transaction);
-        $this->transactionService->flush();
 
         return $response;
     }
