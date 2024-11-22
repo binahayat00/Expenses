@@ -101,7 +101,7 @@ class TransactionController
             return $response->withStatus(404);
         }
 
-        $result = $this->transactionService->update(
+        $updated = $this->transactionService->update(
             $transaction,
             new TransactionData(
                 $data['description'],
@@ -111,11 +111,11 @@ class TransactionController
             )
         );
 
-        $this->entityManagerService->sync($result);
+        $this->entityManagerService->sync($updated);
 
         $this->entityManagerService->sync();
 
-        return $this->responseFormatter->asJson($response,$result);
+        return $this->responseFormatter->asJson($response,$updated);
     }
 
     public function load(Request $request, Response $response): Response
