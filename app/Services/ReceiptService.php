@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Services;
 use App\Entity\Receipt;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Contracts\EntityManagerServiceInterface;
 
 class ReceiptService extends EntityManagerService
 {
     public function __construct(
-        protected readonly EntityManagerInterface $entityManager,
+        private readonly EntityManagerServiceInterface $entityManager,
         private readonly Receipt $receipt
     )
     {
@@ -23,8 +24,6 @@ class ReceiptService extends EntityManagerService
         $this->receipt->setMediaType($mediaType);
         $this->receipt->setCreatedAt(new \DateTime());
         $this->receipt->setUpdatedAt(new \DateTime());
-
-        $this->entityManager->persist($this->receipt);
 
         return $this->receipt;
     }

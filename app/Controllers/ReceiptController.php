@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use Slim\Psr7\Stream;
 use App\Entity\Receipt;
 use App\ResponseFormatter;
 use App\Services\ReceiptService;
 use League\Flysystem\Filesystem;
 use App\Services\TransactionService;
+use App\Contracts\EntityManagerServiceInterface;
 use App\Contracts\RequestValidatorFactoryInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\RequestValidators\UploadReceiptRequestValidator;
-use Slim\Psr7\Stream;
 
 
 class ReceiptController
@@ -24,6 +25,7 @@ class ReceiptController
         private readonly TransactionService $transactionService,
         private readonly ReceiptService $receiptService,
         private readonly ResponseFormatter $responseFormatter,
+        private readonly EntityManagerServiceInterface $entityManagerService
         )
     {
     }
@@ -46,9 +48,9 @@ class ReceiptController
 
         $this->filesystem->write("receipts/$randomFilename", $file->getStream()->getContents());
 
-        $this->receiptService->create($transaction, $filename,$randomFilename, $file->getClientMediaType());
+        $receipt = $this->receiptService->create($transaction, $filename,$randomFilename, $file->getClientMediaType());
         
-        $this->receiptService->flush();
+        $this->entityManagerService->sync($receipt);
 
         return $this->responseFormatter->asJson( $response, $response);
     }
@@ -105,7 +107,7 @@ class ReceiptController
 
         $this->receiptService->delete($receipt);
 
-        $this->receiptService->flush();
+        $this->entityManagerService->delete($receipt,true);
 
         return $response;
     }

@@ -7,11 +7,11 @@ use App\Entity\User;
 use App\Contracts\UserInterface;
 use App\DataObjects\RegisterUserData;
 use App\Contracts\UserProviderServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Contracts\EntityManagerServiceInterface;
 
 class UserProviderService implements UserProviderServiceInterface
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerServiceInterface $entityManager)
     {
     }
     public function getByCredentials(array $credentials): ?UserInterface
@@ -31,8 +31,7 @@ class UserProviderService implements UserProviderServiceInterface
         $user->setEmail($data->email);
         $user->setPassword(password_hash($data->password, PASSWORD_BCRYPT, ['cost' => 12]));
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $this->entityManager->sync($user);
 
         return $user;
     }

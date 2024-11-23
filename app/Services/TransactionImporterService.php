@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Entity\Transaction;
 use App\Entity\User;
-use App\DataObjects\TransactionData;
 use Clockwork\Clockwork;
-use Clockwork\Request\LogLevel;
+use App\Entity\Transaction;
+use App\DataObjects\TransactionData;
+use App\Contracts\EntityManagerServiceInterface;
 
 class TransactionImporterService
 {
@@ -16,8 +16,7 @@ class TransactionImporterService
     public function __construct(
         private readonly CategoryService $categoryService,
         private readonly TransactionService $transactionService,
-        private readonly EntityManagerService $entityManagerService,
-        private readonly Clockwork $clockwork,
+        private readonly EntityManagerServiceInterface $entityManagerService
     )
     {
 
@@ -65,7 +64,7 @@ class TransactionImporterService
 
         if($count > 1)
         {
-            $this->entityManagerService->flush();
+            $this->entityManagerService->sync();
             $this->entityManagerService->clear();
         }
 

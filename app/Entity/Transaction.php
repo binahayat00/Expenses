@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
@@ -53,6 +55,7 @@ class Transaction
     public function __construct()
     {
         $this->receipts = new ArrayCollection();
+        $this->wasReviewed = false;
     }
 
     public function getId(): int
@@ -136,19 +139,11 @@ class Transaction
         return $this;
     }
 
-    /**
-     * Get the value of wasReviewed
-     */ 
     public function getWasReviewed(): bool
     {
         return $this->wasReviewed;
     }
 
-    /**
-     * Set the value of wasReviewed
-     *
-     * @return  self
-     */ 
     public function setWasReviewed(bool $wasReviewed): Transaction
     {
         $this->wasReviewed = $wasReviewed;
