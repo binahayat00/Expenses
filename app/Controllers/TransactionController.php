@@ -70,14 +70,8 @@ class TransactionController
         return $response;
     }
 
-    public function get(Request $request, Response $response, array $args): Response
+    public function get(Request $request, Response $response, Transaction $transaction): Response
     {
-        $transaction = $this->transactionService->getById((int) $args['id']);
-
-        if (!$transaction) {
-            return $response->withStatus(404);
-        }
-
         $data = [
             'id' => $transaction->getId(),
             'description' => $transaction->getDescription(),
