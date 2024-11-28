@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Auth;
 use App\Csrf;
+use App\RouteEntityBindingStrategy;
 use App\Services\EntityManagerService;
 use Slim\App;
 use App\Config;
@@ -55,6 +56,8 @@ return [
         $addMiddleware = require CONFIG_PATH . '/middleware.php';
 
         $app = AppFactory::create();
+
+        $app->getRouteCollector()->setDefaultInvocationStrategy(new RouteEntityBindingStrategy());
 
         $router($app);
 

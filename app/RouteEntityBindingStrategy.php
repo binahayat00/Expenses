@@ -17,6 +17,6 @@ class RouteEntityBindingStrategy implements InvocationStrategyInterface
         array $routeArguments
         ): ResponseInterface
         {
-            // TODO: Implement __invoke() method
+            return $callable($request, $response, $routeArguments);
         }
 }
