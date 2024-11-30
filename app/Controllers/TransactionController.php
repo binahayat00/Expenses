@@ -13,7 +13,7 @@ use App\Services\RequestService;
 use App\Services\CategoryService;
 use App\DataObjects\TransactionData;
 use App\Services\TransactionService;
-use Psr\Http\Message\RequestInterface as Request;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use App\RequestValidators\RequestValidatorFactory;
 use Psr\Http\Message\ResponseInterface as Response;
 use App\RequestValidators\TransactionRequestValidator;
@@ -70,7 +70,7 @@ class TransactionController
         return $response;
     }
 
-    public function get(Request $request, Response $response, Transaction $transaction): Response
+    public function get(Response $response, Transaction $transaction): Response
     {
         $data = [
             'id' => $transaction->getId(),

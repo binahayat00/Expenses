@@ -26,11 +26,37 @@ class RouteEntityBindingStrategy implements InvocationStrategyInterface
         foreach($callableReflection->getParameters() as $parameter)
         {
             $type = $parameter->getType();
-            $name = $parameter->getName();
             
+            if(! $type)
+            {
+                continue;
+            }
+
+            $paramName = $parameter->getName();
+            $typeName = $type->getName();
+
+            if ($type->isBuiltin())
+            {
+                if($typeName === 'array' && $paramName === 'args')
+                {
+                    $resolvedArguments[] = $routeArguments;
+                }
+            }
+            else
+            {
+                if($typeName === ServerRequestInterface::class)
+                {
+                    $resolvedArguments[] = $request;
+                } elseif($typeName === ResponseInterface::class)
+                {
+                    $resolvedArguments[] = $response;
+                } else {
+
+                }
+            }
         }
 
-        return $callable($request, $response, $routeArguments);
+        return $callable(...$resolvedArguments);
     }
 
     public function createReflectionForCallable(callable $callable): ReflectionFunctionAbstract
