@@ -7,7 +7,7 @@ use App\Services\RequestService;
 use Slim\Views\Twig;
 use App\ResponseFormatter;
 use App\Services\CategoryService;
-use Psr\Http\Message\RequestInterface as Request;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Contracts\RequestValidatorFactoryInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use App\RequestValidators\CreateCategoryRequestValidator;

@@ -8,7 +8,7 @@ use Slim\Views\Twig;
 use App\Contracts\AuthInterface;
 use App\DataObjects\RegisterUserData;
 use App\Exception\ValidationException;
-use Psr\Http\Message\RequestInterface as Request;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Contracts\RequestValidatorFactoryInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use App\RequestValidators\UserLoginRequestValidator;

@@ -39,7 +39,7 @@ return function (App $app) {
         $transactions->get('/load', [TransactionController::class, 'load']);
         $transactions->post('', [TransactionController::class, 'store']);
         $transactions->delete('/{id:[0-9]+}', [TransactionController::class, 'delete']);
-        $transactions->get('/{id:[0-9]+}', [TransactionController::class, 'get']);
+        $transactions->get('/{transaction}', [TransactionController::class, 'get']);
         $transactions->post('/{id:[0-9]+}', [TransactionController::class, 'update']);
         $transactions->post('/{id:[0-9]+}/receipts', [ReceiptController::class, 'store']);
         $transactions->get(

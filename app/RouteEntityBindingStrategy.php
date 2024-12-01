@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Contracts\EntityManagerServiceInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use ReflectionMethod;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
@@ -13,6 +15,13 @@ use Slim\Interfaces\InvocationStrategyInterface;
 
 class RouteEntityBindingStrategy implements InvocationStrategyInterface
 {
+    public function __construct(
+        private readonly EntityManagerServiceInterface $entityManagerService,
+        private readonly ResponseFactoryInterface $responseFactory
+        )
+    {
+    }
+
     function __invoke(
         callable $callable, 
         ServerRequestInterface $request, 
@@ -51,7 +60,21 @@ class RouteEntityBindingStrategy implements InvocationStrategyInterface
                 {
                     $resolvedArguments[] = $response;
                 } else {
+                    $entityId = $routeArguments[$paramName] ?? null;
+                    
+                    if(! $entityId || $parameter->allowsNull())
+                    {
+                        throw new \InvalidArgumentException('Unable to resolve argument "' . $paramName . '" in the callable');
+                    }
 
+                    $entity = $this->entityManagerService->find($typeName, $entityId);
+
+                    if(! $entity)
+                    {
+                        return $this->responseFactory->createResponse(404);
+                    }
+                    
+                    $resolvedArguments[] = $entity;
                 }
             }
         }
