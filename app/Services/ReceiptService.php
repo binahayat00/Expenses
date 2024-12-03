@@ -7,7 +7,7 @@ use App\Entity\Receipt;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Contracts\EntityManagerServiceInterface;
 
-class ReceiptService extends EntityManagerService
+class ReceiptService
 {
     public function __construct(
         private readonly EntityManagerServiceInterface $entityManager,
@@ -31,10 +31,5 @@ class ReceiptService extends EntityManagerService
     public function getById(int $id): ?Receipt
     {
         return $this->entityManager->find(Receipt::class , $id);
-    }
-
-    public function delete(Receipt $receipt): void
-    {
-        $this->entityManager->remove($receipt);
     }
 }
