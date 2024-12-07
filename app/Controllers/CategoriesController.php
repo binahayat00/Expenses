@@ -85,12 +85,11 @@ class CategoriesController
     }
 
     public function load(Request $request, Response $response): Response
-    {
+    {   
         $params = $this->requestService->getDataTableQueryParameters($request);
 
         $categories = $this->categoryService->getPaginatedCategories(
-            $params,
-            $request->getAttribute('user')->getId()
+            $params
         );
 
         $transformer = function (Category $category){

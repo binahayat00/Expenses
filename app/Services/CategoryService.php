@@ -38,12 +38,11 @@ class CategoryService
         return $this->entityManager->getRepository(Category::class)->findAll();
     }
 
-    public function getPaginatedCategories(DataTableQueryParams $params, int $userId): Paginator
+    public function getPaginatedCategories(DataTableQueryParams $params): Paginator
     {
         $query = $this->entityManager
             ->getRepository(Category::class)
             ->createQueryBuilder('c')
-            ->where('c.user = :user')->setParameter('user', $userId)
             ->setFirstResult($params->start)
             ->setMaxResults($params->length);
         

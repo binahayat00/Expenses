@@ -21,5 +21,7 @@ interface EntityManagerServiceInterface
     public function clear(?string $entityName = null);
 
     public function toggleReviewed(Transaction $transaction);
+
+    public function enableUserAuthFilter(int $userId): void;
     
 }

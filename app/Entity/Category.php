@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Contracts\OwnableInterface;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\Column;
@@ -16,7 +17,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity, Table('categories')]
 #[HasLifecycleCallbacks]
-class Category
+
+class Category implements OwnableInterface
 {
     use HasTimestamps;
 

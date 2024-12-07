@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 use App\Auth;
 use App\Csrf;
-use App\RouteEntityBindingStrategy;
-use App\Services\EntityManagerService;
 use Slim\App;
 use App\Config;
 use App\Session;
@@ -16,6 +14,7 @@ use function DI\create;
 use Clockwork\Clockwork;
 use Doctrine\ORM\ORMSetup;
 use App\Enum\StorageDriver;
+use App\Filters\UserFilter;
 use App\Enum\AppEnvironment;
 use Slim\Factory\AppFactory;
 use Doctrine\ORM\EntityManager;
@@ -26,11 +25,13 @@ use App\DataObjects\SessionConfig;
 use Clockwork\Storage\FileStorage;
 use Twig\Extra\Intl\IntlExtension;
 use App\Contracts\SessionInterface;
+use App\RouteEntityBindingStrategy;
 use Doctrine\DBAL\Logging\SQLLogger;
 use Symfony\Component\Asset\Package;
 use App\Services\UserProviderService;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Asset\Packages;
+use App\Services\EntityManagerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Clockwork\DataSource\DoctrineDataSource;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -42,8 +43,8 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use App\Contracts\RequestValidatorFactoryInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
-use Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension;
 
+use Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
 use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 
@@ -88,6 +89,8 @@ return [
             paths: $config->get('doctrine.entity_dir'),
             isDevMode: $config->get('doctrine.dev_mode'),
         );
+
+        $configure->addFilter('user', UserFilter::class);
         
         return new EntityManager(
         DriverManager::getConnection($config->get('doctrine.connection'), $configure),
