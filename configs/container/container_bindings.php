@@ -153,4 +153,8 @@ return [
     EntityManagerServiceInterface::class => fn(EntityManagerInterface $entityManager) => new EntityManagerService(
     $entityManager
     ),
+    
+    Symfony\Component\Mailer\MailerInterface::class => function () {
+
+    }
 ];
