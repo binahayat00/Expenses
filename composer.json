@@ -36,6 +36,8 @@
         "symfony/asset": "^7.1",
         "symfony/cache": "^7.1",
         "symfony/console": "^7.1",
+        "symfony/mailer": "*",
+        "symfony/mime": "*",
         "symfony/stimulus-bundle": "^2.19",
         "symfony/twig-bridge": "^7.1",
         "symfony/ux-turbo": "^2.19",

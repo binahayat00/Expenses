@@ -26,7 +26,6 @@ use Clockwork\Storage\FileStorage;
 use Twig\Extra\Intl\IntlExtension;
 use App\Contracts\SessionInterface;
 use App\RouteEntityBindingStrategy;
-use Doctrine\DBAL\Logging\SQLLogger;
 use Symfony\Component\Asset\Package;
 use App\Services\UserProviderService;
 use Psr\Container\ContainerInterface;
