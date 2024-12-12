@@ -27,12 +27,15 @@ use Twig\Extra\Intl\IntlExtension;
 use App\Contracts\SessionInterface;
 use App\RouteEntityBindingStrategy;
 use Symfony\Component\Asset\Package;
+use Symfony\Component\Mailer\Mailer;
 use App\Services\UserProviderService;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Asset\Packages;
 use App\Services\EntityManagerService;
+use Symfony\Component\Mailer\Transport;
 use Doctrine\ORM\EntityManagerInterface;
 use Clockwork\DataSource\DoctrineDataSource;
+use Symfony\Component\Mailer\MailerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use App\Contracts\UserProviderServiceInterface;
 use App\Contracts\EntityManagerServiceInterface;
@@ -40,9 +43,9 @@ use Symfony\Bridge\Twig\Extension\AssetExtension;
 use App\RequestValidators\RequestValidatorFactory;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
+
 use App\Contracts\RequestValidatorFactoryInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
-
 use Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
 use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
@@ -153,7 +156,9 @@ return [
     $entityManager
     ),
     
-    Symfony\Component\Mailer\MailerInterface::class => function () {
-
+    MailerInterface::class => function (Config $config) {
+        $transport = Transport::fromDsn($config->get('mailer.dsn'));
+        
+        return new Mailer($transport);
     }
 ];
