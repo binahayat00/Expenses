@@ -13,7 +13,11 @@ use App\DataObjects\RegisterUserData;
 class Auth implements AuthInterface
 {
     private ?UserInterface $user = null;
-    public function __construct(private readonly UserProviderServiceInterface $userProvider, private readonly SessionInterface $session)
+    public function __construct(
+        private readonly UserProviderServiceInterface $userProvider, 
+        private readonly SessionInterface $session,
+        private readonly SignupEmail $signupEmail
+        )
     {
 
     }
