@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Mail\SignupEmail;
 use App\Contracts\AuthInterface;
-use App\Contracts\SessionInterface;
 use App\Contracts\UserInterface;
-use App\Contracts\UserProviderServiceInterface;
+use App\Contracts\SessionInterface;
 use App\DataObjects\RegisterUserData;
+use App\Contracts\UserProviderServiceInterface;
 
 class Auth implements AuthInterface
 {
