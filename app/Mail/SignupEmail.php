@@ -22,6 +22,11 @@ class SignupEmail
             ->to($to)
             ->subject('Welcome to Expenses!')
             ->htmlTemplate('emails/signup.html.twig')
-            ->context([]);
+            ->context(
+                [
+                    'activationLink' => '#',
+                    'expirationDate' => new \DateTime('+30 minutes'),
+                ]
+            );
     }
 }
