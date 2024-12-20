@@ -6,11 +6,13 @@ namespace App\Mail;
 
 use App\Config;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
 
 class SignupEmail
 {
     public function __construct(
-        private readonly Config $config
+        private readonly Config $config,
+        private readonly MailerInterface $mailer
     )
     {
 
@@ -28,5 +30,7 @@ class SignupEmail
                     'expirationDate' => new \DateTime('+30 minutes'),
                 ]
             );
+        
+        $this->mailer->send($message);
     }
 }
