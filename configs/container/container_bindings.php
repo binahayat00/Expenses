@@ -34,16 +34,18 @@ use Symfony\Component\Asset\Packages;
 use App\Services\EntityManagerService;
 use Symfony\Component\Mailer\Transport;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Clockwork\DataSource\DoctrineDataSource;
 use Symfony\Component\Mailer\MailerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use App\Contracts\UserProviderServiceInterface;
 use App\Contracts\EntityManagerServiceInterface;
 use Symfony\Bridge\Twig\Extension\AssetExtension;
+use Symfony\Component\Mime\BodyRendererInterface;
 use App\RequestValidators\RequestValidatorFactory;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 
+use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use App\Contracts\RequestValidatorFactoryInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension;
@@ -160,5 +162,7 @@ return [
         $transport = Transport::fromDsn($config->get('mailer.dsn'));
         
         return new Mailer($transport);
-    }
+    },
+    
+    BodyRendererInterface::class => fn(Twig $twig) => new BodyRenderer($twig->getEnvironment())
 ];
