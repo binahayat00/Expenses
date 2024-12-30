@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-use App\Middleware\VerifyEmailMiddleware;
 use Slim\App;
 use App\Middleware\AuthMiddleware;
 use App\Controllers\AuthController;
 use App\Controllers\HomeController;
 use App\Middleware\GuestMiddleware;
+use App\Controllers\VerifyController;
 use Slim\Routing\RouteCollectorProxy;
 use App\Controllers\ReceiptController;
 use App\Controllers\CategoriesController;
+use App\Middleware\VerifyEmailMiddleware;
 use App\Controllers\TransactionController;
 use App\Controllers\TransactionImporterController;
 
@@ -57,7 +58,7 @@ return function (App $app) {
 
     $app->group('', function(RouteCollectorProxy $group){
         $group->post('/logout', [AuthController::class, 'logOut']);
-        $group->post('/verify', [VerifyController::class, 'index']);
+        $group->get('/verify', [VerifyController::class, 'index']);
     })->add(AuthMiddleware::class);
 
     $app->group('', function (RouteCollectorProxy $guest) {
