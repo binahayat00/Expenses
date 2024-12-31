@@ -21,6 +21,8 @@ class SignupEmail
     }
     public function send(string $to): void
     {
+        $activationLink = $this->generateSignedUrl();
+
         $message = (new TemplatedEmail())
             ->from($this->config->get('mailer.from'))
             ->to($to)
@@ -28,7 +30,7 @@ class SignupEmail
             ->htmlTemplate('emails/signup.html.twig')
             ->context(
                 [
-                    'activationLink' => '#',
+                    'activationLink' => $activationLink,
                     'expirationDate' => new \DateTime('+30 minutes'),
                 ]
             );
@@ -36,5 +38,11 @@ class SignupEmail
         $this->renderer->render($message);
 
         $this->mailer->send($message);
+    }
+
+    public function generateSignedUrl()
+    {
+        // TODO 
+        // {BASE_URL}/verify/{USER_ID}/{EMAIL_HASH}?expiration={EXPIRATION_TIMESTAMP}&signature={SIGNATURE}
     }
 }
