@@ -8,6 +8,7 @@ use Slim\App;
 use App\Config;
 use App\Session;
 use Slim\Csrf\Guard;
+use Slim\Interfaces\RouteParserInterface;
 use Slim\Views\Twig;
 use App\Enum\SameSite;
 use function DI\create;
@@ -54,10 +55,10 @@ use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
 
 
 return [
-    App::class => function(ContainerInterface $container){
+    App::class => function (ContainerInterface $container) {
         AppFactory::setContainer($container);
-        
-        $router = require CONFIG_PATH ."/routes/web.php";
+
+        $router = require CONFIG_PATH . "/routes/web.php";
         $addMiddleware = require CONFIG_PATH . '/middleware.php';
 
         $app = AppFactory::create();
@@ -72,7 +73,7 @@ return [
         $router($app);
 
         $addMiddleware($app);
-        
+
         return $app;
     },
     Config::class => create(Config::class)->constructor(require CONFIG_PATH . "/app.php"),
@@ -88,23 +89,24 @@ return [
 
         return $twig;
     },
-    EntityManagerInterface::class =>  function(Config $config) {
+    EntityManagerInterface::class => function (Config $config) {
         $configure = ORMSetup::createAttributeMetadataConfiguration(
             paths: $config->get('doctrine.entity_dir'),
             isDevMode: $config->get('doctrine.dev_mode'),
         );
 
         $configure->addFilter('user', UserFilter::class);
-        
+
         return new EntityManager(
-        DriverManager::getConnection($config->get('doctrine.connection'), $configure),
-        $configure,
+            DriverManager::getConnection($config->get('doctrine.connection'), $configure),
+            $configure,
         );
     },
     'webpack_encore.packages' => fn() => new Packages(
         new Package(new JsonManifestVersionStrategy(
             BUILD_PATH . '/manifest.json'
-    ))),
+        ))
+    ),
     'webpack_encore.entrypoint_lookup' => fn() => new EntrypointLookup(BUILD_PATH . '/entrypoints.json'),
     'webpack_encore.tag_renderer' => fn(ContainerInterface $container) => new TagRenderer(
         new EntrypointLookupCollection($container),
@@ -122,7 +124,7 @@ return [
             $config->get('session.secure', true),
             $config->get('session.httponly', true),
             SameSite::from($config->get('session.samesite', 'lax')),
-    )
+        )
     ),
     RequestValidatorFactoryInterface::class => fn(ContainerInterface $container) => $container->get(RequestValidatorFactory::class),
     'csrf' => fn(ResponseFactoryInterface $responseFactory, Csrf $csrf) => new Guard(
@@ -131,18 +133,18 @@ return [
         persistentTokenMode: true
     ),
     Filesystem::class => function (Config $config) {
-        $adapter = match($config->get('storage.driver')) {
+        $adapter = match ($config->get('storage.driver')) {
             StorageDriver::Local => new LocalFilesystemAdapter(STORAGE_PATH),
         };
 
         return new League\Flysystem\Filesystem($adapter);
     },
 
-    Clockwork::class => function(EntityManagerInterface $entityManager, Config $config) {
+    Clockwork::class => function (EntityManagerInterface $entityManager, Config $config) {
         $clockwork = new Clockwork();
 
         // new DoctrineDataSource($entityManager);
-
+    
         $clockwork->storage(new FileStorage(STORAGE_PATH . '/clockwork'));
         // $clockwork->addDataSource(new DoctrineDataSource($entityManager));
         $clockwork->addDataSource($dataSource = new DoctrineDataSource($entityManager));
@@ -155,14 +157,15 @@ return [
         return $clockwork;
     },
     EntityManagerServiceInterface::class => fn(EntityManagerInterface $entityManager) => new EntityManagerService(
-    $entityManager
+        $entityManager
     ),
-    
+
     MailerInterface::class => function (Config $config) {
         $transport = Transport::fromDsn($config->get('mailer.dsn'));
-        
+
         return new Mailer($transport);
     },
-    
-    BodyRendererInterface::class => fn(Twig $twig) => new BodyRenderer($twig->getEnvironment())
+
+    BodyRendererInterface::class => fn(Twig $twig) => new BodyRenderer($twig->getEnvironment()),
+    RouteParserInterface::class => fn(App $app) => $app->getRouteCollector()->getRouteParser(),
 ];

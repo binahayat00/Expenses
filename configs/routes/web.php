@@ -59,6 +59,7 @@ return function (App $app) {
     $app->group('', function(RouteCollectorProxy $group){
         $group->post('/logout', [AuthController::class, 'logOut']);
         $group->get('/verify', [VerifyController::class, 'index']);
+        $group->get('/verify/{id}/{hash}', [VerifyController::class, 'verify'])->setName('verify');
     })->add(AuthMiddleware::class);
 
     $app->group('', function (RouteCollectorProxy $guest) {
