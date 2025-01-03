@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Mail;
 
 use App\Config;
+use App\SignedUrl;
+use App\Entity\User;
 use Slim\Interfaces\RouteParserInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
@@ -16,50 +18,35 @@ class SignupEmail
         private readonly Config $config,
         private readonly MailerInterface $mailer,
         private readonly BodyRendererInterface $renderer,
-        private readonly RouteParserInterface $routeParser
-    )
-    {
+        private readonly RouteParserInterface $routeParser,
+        private readonly SignedUrl $signedUrl
+    ) {
 
     }
-    public function send(string $to): void
+    public function send(User $user): void
     {
-        $activationLink = $this->generateSignedUrl();
+        $email = $user->getEmail();
+        $expirationDate = new \DateTime('+30 minutes');
+        $activationLink = $this->signedUrl->fromRoute(
+            'verify',
+            ['id' => $user->getId(), 'hash' => sha1($email)],
+            $expirationDate
+        );
 
         $message = (new TemplatedEmail())
             ->from($this->config->get('mailer.from'))
-            ->to($to)
+            ->to($email)
             ->subject('Welcome to Expenses!')
             ->htmlTemplate('emails/signup.html.twig')
             ->context(
                 [
                     'activationLink' => $activationLink,
-                    'expirationDate' => new \DateTime('+30 minutes'),
+                    'expirationDate' => $expirationDate,
                 ]
             );
-        
+
         $this->renderer->render($message);
 
         $this->mailer->send($message);
-    }
-
-    public function generateSignedUrl(
-        int $userId,
-        string $email,
-        \DateTime $expirationDate
-    )
-    {
-        $expiration = $expirationDate->getTimestamp();
-        $routeParams = ['id' => $userId, 'hash' => sha1($email)];
-        $queryParams = ['expiration' => $expiration ];
-        $baseUrl = trim($this->config->get('app_url'), '/');
-        $url = $baseUrl . $this->routeParser->urlFor('verify', $routeParams, $queryParams);
-
-        $signature = hash_hmac('sha256', $url, $this->config->get('app_key'));
-        // {BASE_URL}/verify/{USER_ID}/{EMAIL_HASH}?expiration={EXPIRATION_TIMESTAMP}&signature={SIGNATURE}
-        return $baseUrl . $this->routeParser->urlFor(
-            'verify',
-            $routeParams,
-            $queryParams + ['signature' => $signature]
-        );
     }
 }
