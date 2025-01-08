@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Middleware\ValidateSignatureMiddleware;
 use Slim\App;
 use App\Middleware\AuthMiddleware;
 use App\Controllers\AuthController;
@@ -59,7 +60,9 @@ return function (App $app) {
     $app->group('', function(RouteCollectorProxy $group){
         $group->post('/logout', [AuthController::class, 'logOut']);
         $group->get('/verify', [VerifyController::class, 'index']);
-        $group->get('/verify/{id}/{hash}', [VerifyController::class, 'verify'])->setName('verify');
+        $group->get('/verify/{id}/{hash}', [VerifyController::class, 'verify'])
+        ->setName('verify')
+        ->add(ValidateSignatureMiddleware::class);
     })->add(AuthMiddleware::class);
 
     $app->group('', function (RouteCollectorProxy $guest) {
