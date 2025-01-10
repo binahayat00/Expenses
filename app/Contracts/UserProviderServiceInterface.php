@@ -14,4 +14,5 @@ interface UserProviderServiceInterface
     public function createUser(RegisterUserData $data): UserInterface;
 
     public function countOfUsersByEmail(string $email): ?int;
+    public function verifyUser(UserInterface $user): void;
 }

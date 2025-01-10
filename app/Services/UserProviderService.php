@@ -42,4 +42,11 @@ class UserProviderService implements UserProviderServiceInterface
             ['email' => $email]
         );
     }
+
+    public function verifyUser(UserInterface $user): void
+    {
+        $user->setVerifiedAt(new \DateTime());
+
+        $this->entityManager->sync($user);
+    }
 }
