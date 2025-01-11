@@ -38,7 +38,7 @@ class VerifyController
         {
             $this->userProviderService->verifyUser($user);
         }
-        // TODO
-        return $response;
+        
+        return $response->withHeader('Location','/')->withStatus(302);
     }
 }
