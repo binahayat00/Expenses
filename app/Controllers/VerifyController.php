@@ -29,7 +29,7 @@ class VerifyController
         /** @var User $user */
         $user = $request->getAttribute('user');
 
-        if (! hash_equals((string) $user->getId(), $args['id']) || hash_equals(sha1($user->getEmail()), $args['hash']))
+        if (! hash_equals((string) $user->getId(), $args['id']) || ! hash_equals(sha1($user->getEmail()), $args['hash']))
         {
             throw new \RuntimeException('Verification faild');
         }
