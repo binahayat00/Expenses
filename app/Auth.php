@@ -56,6 +56,11 @@ class Auth implements AuthInterface
             return false;
         }
 
+        if($user->hasTwoFactorAuthEnabled())
+        {
+            //TODO
+        }
+
         $this->logIn($user);
 
         return true;
