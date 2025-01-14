@@ -53,17 +53,19 @@ class Auth implements AuthInterface
         $user = $this->userProvider->getByCredentials($credentials);
 
         if(! $user || ! $this->checkCredentials($user, $credentials)) {
-            return false;
+            return AuthAttemptStatus::FAILED;
         }
 
         if($user->hasTwoFactorAuthEnabled())
         {
             //TODO
+
+            return AuthAttemptStatus::TWO_FACTOR_AUTH;
         }
 
         $this->logIn($user);
 
-        return true;
+        return AuthAttemptStatus::SUCCESS;
     }
 
     public function checkCredentials(UserInterface $user, array $credentials): bool
