@@ -155,4 +155,11 @@ class User implements UserInterface
         
         return $this;
     }
+
+    public function hasTwoFactorAuthEnabled(): bool
+    {
+        //TODO
+
+        return true;
+    }
 }
