@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Entity\User;
 use App\Mail\SignupEmail;
 use App\Contracts\AuthInterface;
 use App\Contracts\UserInterface;
+use App\Mail\TwoFactorAuthEmail;
 use App\Contracts\SessionInterface;
 use App\DataObjects\RegisterUserData;
 use App\Contracts\UserProviderServiceInterface;
@@ -18,7 +18,8 @@ class Auth implements AuthInterface
     public function __construct(
         private readonly UserProviderServiceInterface $userProvider, 
         private readonly SessionInterface $session,
-        private readonly SignupEmail $signupEmail
+        private readonly SignupEmail $signupEmail,
+        private readonly TwoFactorAuthEmail $twoFactorAuthEmail,
         )
     {
 
@@ -103,8 +104,11 @@ class Auth implements AuthInterface
         $this->user = $user;
     }
 
-    public function startLoginWith2FA(User $user)
+    public function startLoginWith2FA(UserInterface $user)
     {
+        $this->session->regenerate();
+        $this->session->put('2fa', $user->getId());
 
+        // send email
     }
 }
