@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Entity\User;
 use App\Mail\SignupEmail;
 use App\Contracts\AuthInterface;
 use App\Contracts\UserInterface;
@@ -58,6 +59,7 @@ class Auth implements AuthInterface
 
         if($user->hasTwoFactorAuthEnabled())
         {
+            $this->startLoginWith2FA();
             //TODO
 
             return AuthAttemptStatus::TWO_FACTOR_AUTH;
@@ -99,5 +101,10 @@ class Auth implements AuthInterface
         $this->session->put('user', $user->getId());
 
         $this->user = $user;
+    }
+
+    public function startLoginWith2FA(User $user)
+    {
+
     }
 }
