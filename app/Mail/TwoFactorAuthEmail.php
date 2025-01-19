@@ -7,6 +7,7 @@ namespace App\Mail;
 use App\Config;
 use App\SignedUrl;
 use App\Entity\User;
+use App\Entity\UserLoginCode;
 use Slim\Interfaces\RouteParserInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
@@ -23,15 +24,9 @@ class TwoFactorAuthEmail
     ) {
 
     }
-    public function send(User $user): void
+    public function send(UserLoginCode $userLoginCode): void
     {
-        $email = $user->getEmail();
-        $expirationDate = new \DateTime('+30 minutes');
-        $activationLink = $this->signedUrl->fromRoute(
-            'verify',
-            ['id' => $user->getId(), 'hash' => sha1($email)],
-            $expirationDate
-        );
+        $email = $userLoginCode->getUser()->getEmail();
 
         $message = (new TemplatedEmail())
             ->from($this->config->get('mailer.from'))
@@ -40,8 +35,7 @@ class TwoFactorAuthEmail
             ->htmlTemplate('emails/two_factor.html.twig')
             ->context(
                 [
-                    'activationLink' => $activationLink,
-                    'expirationDate' => $expirationDate,
+                    'code' => $userLoginCode->getCode(),
                 ]
             );
 

@@ -11,6 +11,7 @@ use App\Mail\TwoFactorAuthEmail;
 use App\Contracts\SessionInterface;
 use App\DataObjects\RegisterUserData;
 use App\Contracts\UserProviderServiceInterface;
+use App\Services\UserLoginCodeService;
 
 class Auth implements AuthInterface
 {
@@ -20,6 +21,7 @@ class Auth implements AuthInterface
         private readonly SessionInterface $session,
         private readonly SignupEmail $signupEmail,
         private readonly TwoFactorAuthEmail $twoFactorAuthEmail,
+        private readonly UserLoginCodeService $userLoginCodeService,
         )
     {
 
@@ -109,6 +111,6 @@ class Auth implements AuthInterface
         $this->session->regenerate();
         $this->session->put('2fa', $user->getId());
 
-        // send email
+        $this->twoFactorAuthEmail->send($this->userLoginCodeService->generate($user));
     }
 }
