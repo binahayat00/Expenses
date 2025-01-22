@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App;
 
 use App\Mail\SignupEmail;
+use App\Enum\AuthAttemptStatus;
 use App\Contracts\AuthInterface;
 use App\Contracts\UserInterface;
 use App\Mail\TwoFactorAuthEmail;
 use App\Contracts\SessionInterface;
 use App\DataObjects\RegisterUserData;
-use App\Contracts\UserProviderServiceInterface;
 use App\Services\UserLoginCodeService;
+use App\Contracts\UserProviderServiceInterface;
 
 class Auth implements AuthInterface
 {
@@ -52,7 +53,7 @@ class Auth implements AuthInterface
         return $this->user;
     }
 
-    public function attemptLogin(array $credentials): bool
+    public function attemptLogin(array $credentials): AuthAttemptStatus
     {
         $user = $this->userProvider->getByCredentials($credentials);
 
@@ -62,8 +63,7 @@ class Auth implements AuthInterface
 
         if($user->hasTwoFactorAuthEnabled())
         {
-            $this->startLoginWith2FA();
-            //TODO
+            $this->startLoginWith2FA($user);
 
             return AuthAttemptStatus::TWO_FACTOR_AUTH;
         }
