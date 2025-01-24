@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use Slim\Views\Twig;
 use App\ResponseFormatter;
+use App\Enum\AuthAttemptStatus;
 use App\Contracts\AuthInterface;
 use App\DataObjects\RegisterUserData;
 use App\Exception\ValidationException;
