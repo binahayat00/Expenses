@@ -77,4 +77,9 @@ class AuthController
 
         return $response->withHeader('Location', '/')->withStatus(302);
     }
+
+    public function twoFactorLogin()
+    {
+        
+    }
 }
