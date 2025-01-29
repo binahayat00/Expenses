@@ -35,7 +35,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - 3306:3306
+      - 3307:3306
   mailhog:
     container_name: expenses-mailhog
     image: mailhog/mailhog
@@ -43,6 +43,6 @@ services:
     logging:
       driver: "none"
     ports:
-      - "8025:8025"
-      - "1025:1025"
+      - "8026:8025"
+      - "1026:1025"
 
