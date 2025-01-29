@@ -52,7 +52,6 @@ class AuthController
     public function logIn(Request $request, Response $response): Response
     {
         $data = $this->requestValidatorFactory->make(UserLoginRequestValidator::class)->validate($request->getParsedBody());
-
         $status = $this->auth->attemptLogin($data);
 
         if($status === AuthAttemptStatus::FAILED)
