@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Contracts\UserInterface;
 use App\Entity\User;
 use App\Entity\UserLoginCode;
 use App\Contracts\EntityManagerServiceInterface;
@@ -27,5 +28,26 @@ class UserLoginCodeService
         $this->entityManagerService->sync($userLoginCode);
 
         return $userLoginCode;
+    }
+
+    public function verify(User $user, string $code): bool
+    {
+        $userLoginCode = $this->entityManagerService->getRepository(UserLoginCode::class)->findOneBy([
+            'user' => $user,
+            'code' => $code,
+            'isActive' => true,
+        ]);
+
+        if(! $userLoginCode)
+        {
+            return false;
+        }
+
+        if($userLoginCode->getExpiration() <= new \DateTime())
+        {
+            return false;
+        }
+
+        return true;
     }
 }

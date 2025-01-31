@@ -4,10 +4,11 @@ namespace App\RequestValidators;
 
 use Valitron\Validator;
 use App\Exception\ValidationException;
+use App\Contracts\RequestValidatorInterface;
 
-class TwoFactorLoginRequestValidator
+class TwoFactorLoginRequestValidator implements RequestValidatorInterface
 {
-    public function validate(array $data)
+    public function validate(array $data): array
     {
         $validator = new Validator($data);
 
