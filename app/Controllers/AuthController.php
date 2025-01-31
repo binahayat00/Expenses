@@ -15,6 +15,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use App\RequestValidators\UserLoginRequestValidator;
 use App\RequestValidators\RegisterUserRequestValidator;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use App\RequestValidators\TwoFactorLoginRequestValidator;
 
 class AuthController
 {
@@ -77,8 +78,17 @@ class AuthController
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 
-    public function twoFactorLogin()
+    public function twoFactorLogin(Request $request, Response $response):Response     
     {
-        
+        $data = $this->requestValidatorFactory->make(TwoFactorLoginRequestValidator::class)->validate(
+            $request->getParsedBody()
+        );
+
+        if (! $this->auth->attemptTwoFactorLogin($data))
+        {
+            throw new ValidationException(['code' => ['Invalid Code!']]);
+        }
+
+        return $response;
     }
 }
