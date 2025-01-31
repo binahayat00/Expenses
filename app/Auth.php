@@ -111,6 +111,8 @@ class Auth implements AuthInterface
         $this->session->regenerate();
         $this->session->put('2fa', $user->getId());
 
+        $this->userLoginCodeService->deactivateAllActiveCodes($user);
+
         $this->twoFactorAuthEmail->send($this->userLoginCodeService->generate($user));
     }
 
@@ -138,6 +140,8 @@ class Auth implements AuthInterface
         $this->session->forget('2fa');
 
         $this->logIn($user);
+
+        $this->userLoginCodeService->deactivateAllActiveCodes($user);
 
         return true;
     }
