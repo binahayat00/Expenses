@@ -113,4 +113,32 @@ class Auth implements AuthInterface
 
         $this->twoFactorAuthEmail->send($this->userLoginCodeService->generate($user));
     }
+
+    public function attemptTwoFactorLogin(array $data): bool
+    {
+        $userId = $this->session->get('2fa');
+
+        if(! $userId)
+        {
+            return false;
+        }
+
+        $user = $this->userProvider->getById($userId);
+
+        if(! $user || $user->getEmail() !== $data['email'])
+        {
+            return false;
+        }
+
+        if(! $this->userLoginCodeService->verify($user, $data['code']))
+        {
+            return false;
+        }
+
+        $this->session->forget('2fa');
+
+        $this->logIn($user);
+
+        return true;
+    }
 }
