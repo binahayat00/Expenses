@@ -1,5 +1,15 @@
 {% extends "auth/layout.twig" %}
 
+{% block stylesheets %}
+	{{ parent() }}
+	{{ encore_entry_link_tags('auth') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	{{ encore_entry_script_tags('auth') }}
+{% endblock %}
+
 {% block title %}Log In
 {% endblock %}
 
@@ -30,23 +40,22 @@
 										</div>
 									</div>
 									<p class="mb-4 text-end">
-										<a class="text-secondary fw-semibold" href="#">Forgot
-																																																							                                            password?</a>
+										<a class="text-secondary fw-semibold" href="/forgot-password">Forgot password?</a>
 									</p>
-									<button class="btn btn-primary bg-gradient text-white btn-lg px-5 log-in-btn" type="button">Log In
-									</button>
-								</form>
-							</div>
-							<div>
-								<p class="mb-0 text-dark">Don't have an account?
-									<a href="/register" class="text-primary fw-bold">Sign Up</a>
-								</p>
-							</div>
-						</div>
+								</a>
+							</p>
+							<button class="btn btn-primary bg-gradient text-white btn-lg px-5 log-in-btn" type="button">Log In
+							</button>
+						</form>
+					</div>
+					<div>
+						<p class="mb-0 text-dark">Don't have an account?
+							<a href="/register" class="text-primary fw-bold">Sign Up</a>
+						</p>
 					</div>
 				</div>
 			</div>
 		</div>
-		{% include 'auth/two_factor_modal.twig' %}
-	</section>
-{% endblock %}
+	</div>
+</div>
+{% include 'auth/two_factor_modal.twig' %}</section>{% endblock %}
