@@ -7,6 +7,8 @@ use Slim\App;
 use App\Middleware\AuthMiddleware;
 use App\Controllers\AuthController;
 use App\Controllers\HomeController;
+use App\Controllers\PasswordResetController;
+use App\Controllers\ProfileController;
 use App\Middleware\GuestMiddleware;
 use App\Controllers\VerifyController;
 use Slim\Routing\RouteCollectorProxy;
@@ -55,6 +57,12 @@ return function (App $app) {
             $transactions->post('/{transaction}/review', [TransactionController::class, 'toggleReviewed']);
 
         });
+
+        $group->group('/profile', function(RouteCollectorProxy $profile) {
+            $profile->get('', [ProfileController::class, 'index']);
+            $profile->post('', [ProfileController::class, 'update']);
+        });
+
     })->add(VerifyEmailMiddleware::class)->add(AuthMiddleware::class);
 
     $app->group('', function(RouteCollectorProxy $group){
@@ -71,5 +79,7 @@ return function (App $app) {
         $guest->post('/login', [AuthController::class, 'logIn']);
         $guest->post('/register', [AuthController::class, 'register']);
         $guest->post('/login/two-factor', [AuthController::class, 'twoFactorLogin']);
+        $guest->get('/forgot-password', [PasswordResetController::class, 'showForgotPasswordForm']);
+        $guest->post('/forgot-password', [PasswordResetController::class, 'handleForgotPasswordRequest']);
     })->add(GuestMiddleware::class);
 };
