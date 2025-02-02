@@ -45,4 +45,10 @@ services:
     ports:
       - "8026:8025"
       - "1026:1025"
-
+  redis:
+    image: redis:latest
+    container_name: expenses-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass mypassword
