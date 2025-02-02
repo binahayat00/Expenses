@@ -30,6 +30,7 @@
         "league/flysystem": "^3.0",
         "league/mime-type-detection": "^1.16",
         "php-di/php-di": "^7.0",
+        "psr/simple-cache": "^3.0",
         "slim/csrf": "^1.5",
         "slim/psr7": "^1.7",
         "slim/slim": "^4.14",
