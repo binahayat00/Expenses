@@ -11,7 +11,10 @@ use App\Contracts\EntityManagerServiceInterface;
 
 class UserProviderService implements UserProviderServiceInterface
 {
-    public function __construct(private readonly EntityManagerServiceInterface $entityManager)
+    public function __construct(
+        private readonly EntityManagerServiceInterface $entityManager,
+        private readonly HashService $hashService,
+        )
     {
     }
     public function getByCredentials(array $credentials): ?UserInterface
@@ -29,7 +32,7 @@ class UserProviderService implements UserProviderServiceInterface
 
         $user->setName($data->name);
         $user->setEmail($data->email);
-        $user->setPassword(password_hash($data->password, PASSWORD_BCRYPT, ['cost' => 12]));
+        $user->setPassword($this->hashService->hashPassword($data->password));
 
         $this->entityManager->sync($user);
 
