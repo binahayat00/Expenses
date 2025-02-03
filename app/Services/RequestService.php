@@ -16,15 +16,13 @@ class RequestService
     {
         $referer = $request->getHeader('referer')[0] ?? '';
 
-        if(! $referer)
-        {
+        if (!$referer) {
             return $this->session->get('previousUrl');
         }
 
         $refererHost = parse_url($referer, PHP_URL_HOST);
 
-        if ($refererHost !== $request->getUri()->getHost())
-        {
+        if ($refererHost !== $request->getUri()->getHost()) {
             $referer = $this->session->get('previousUrl');
         }
 
@@ -44,12 +42,28 @@ class RequestService
         $orderDir = $params['order'][0]['dir'];
 
         return new DataTableQueryParams(
-            (int) $params['start'], 
+            (int) $params['start'],
             (int) $params['length'],
-            $orderBy, 
+            $orderBy,
             $orderDir,
             $params['search']['value'],
             (int) $params['draw']
         );
+    }
+
+    public function getClientIp(ServerRequestInterface $request, array $trustedProxies = []): ?string
+    {
+        $serverParams = $request->getServerParams();
+
+        if (
+            in_array($serverParams['REMOTE_ADDR'], $trustedProxies, true)
+            && isset($serverParams['HTTP_X_FORWARDED_FOR'])
+        ) {
+            $ips = explode(',', $serverParams['HTTP_X_FORWARDED_FOR']);
+
+            return trim($ips[0]);
+        }
+
+        return $serverParams['REMOTE_ADDR'] ?? null;
     }
 }

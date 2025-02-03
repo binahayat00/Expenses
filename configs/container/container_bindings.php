@@ -13,6 +13,8 @@ use Slim\Csrf\Guard;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Views\Twig;
 use App\Enum\SameSite;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
+use Symfony\Component\Cache\Psr16Cache;
 use function DI\create;
 use Clockwork\Clockwork;
 use Doctrine\ORM\ORMSetup;
@@ -177,6 +179,8 @@ return [
         $redis->connect($config['host'], (int) $config['port']);
         $redis->auth($config['password']);
 
-        return new RedisCache($redis);
+        $adapter = new RedisAdapter($redis);
+
+        return new Psr16Cache($adapter);
     }
 ];
