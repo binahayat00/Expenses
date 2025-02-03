@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Auth;
 use App\Csrf;
+use App\RedisCache;
+use Psr\SimpleCache\CacheInterface;
 use Slim\App;
 use App\Config;
 use App\Session;
@@ -168,4 +170,13 @@ return [
 
     BodyRendererInterface::class => fn(Twig $twig) => new BodyRenderer($twig->getEnvironment()),
     RouteParserInterface::class => fn(App $app) => $app->getRouteCollector()->getRouteParser(),
+    CacheInterface::class => function(Config $config) {
+        $redis = new \Redis();
+        $config = $config->get('redis');
+
+        $redis->connect($config['host'], (int) $config['port']);
+        $redis->auth($config['password']);
+
+        return new RedisCache($redis);
+    }
 ];
