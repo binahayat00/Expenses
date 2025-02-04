@@ -189,7 +189,7 @@ return [
 
     BodyRendererInterface::class => fn(Twig $twig) => new BodyRenderer($twig->getEnvironment()),
     RouteParserInterface::class => fn(App $app) => $app->getRouteCollector()->getRouteParser(),
-    CacheInterface::class => function (Config $config) {
+    CacheInterface::class => function(Config $config) {
         $redis = new \Redis();
         $config = $config->get('redis');
 
