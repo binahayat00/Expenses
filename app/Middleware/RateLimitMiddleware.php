@@ -12,7 +12,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
-use Slim\Routing\RouteContext;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 class RateLimitMiddleware implements MiddlewareInterface
@@ -22,7 +21,6 @@ class RateLimitMiddleware implements MiddlewareInterface
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly RequestService $requestService,
         private readonly Config $config,
-        private readonly RateLimiterFactory $rateLimiterFactory
         )
     {
     }
@@ -30,13 +28,14 @@ class RateLimitMiddleware implements MiddlewareInterface
     {
         $clientIp = $this->requestService->getClientIp($request, $this->config->get('trusted_proxies'));
 
-        $routeContext = RouteContext::fromRequest($request);
-        $route = $routeContext->getRoute();
-        $limiter = $this->rateLimiterFactory->create($route->getName() . '_' . $clientIp);
-        
-        if($limiter->consume()->isAccepted() === false){
+        $cacheKey = "rate_limit_$clientIp";
+        $requests = (int) $this->cache->get($cacheKey);
+
+        if($requests > 3){
             return $this->responseFactory->createResponse(429,'Too many requests!');
         }
+
+        $this->cache->set($cacheKey, $requests + 1, 60);
 
         return $handler->handle($request);
     }
