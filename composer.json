@@ -28,7 +28,6 @@
         "egulias/email-validator": "*",
         "itsgoingd/clockwork": "^5.3",
         "league/flysystem": "^3.0",
-        "league/flysystem-aws-s3-v3": "^3.0",
         "league/mime-type-detection": "^1.16",
         "php-di/php-di": "^7.0",
         "psr/simple-cache": "^3.0",
