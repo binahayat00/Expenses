@@ -38,7 +38,13 @@ return [
         'samesite' => 'lax'
     ],
     'storage' => [
-        'driver' => StorageDriver::Local,
+        'driver' => StorageDriver::Remote_AWS,
+        's3' => [
+            'key' => $_ENV['AWS_KEY'],
+            'secret' => $_ENV['AWS_SECRET'],
+            'region' => $_ENV['AWS_REGION'],
+            'bucket' => $_ENV['AWS_BUCKET'],
+        ]
     ],
     'mailer' => [
         'dsn' => $_ENV['MAILER_DSN'],

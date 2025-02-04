@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Auth;
 use App\Csrf;
-use App\RedisCache;
 use Psr\SimpleCache\CacheInterface;
 use Slim\App;
 use App\Config;
@@ -137,8 +136,26 @@ return [
         persistentTokenMode: true
     ),
     Filesystem::class => function (Config $config) {
+        $digitalOcean = function (array $options) {
+            $client = new Aws\S3\S3Client(
+                [
+                    'credentials' => [
+                        'key' => $options['key'],
+                        'secret' => $options['secret'],
+                    ],
+                    'region' => $options['region'],
+                ]
+            );
+
+            return new League\Flysystem\AwsS3V3\AwsS3V3Adapter(
+                $client,
+                $options['bucket']
+            );
+        };
+
         $adapter = match ($config->get('storage.driver')) {
             StorageDriver::Local => new LocalFilesystemAdapter(STORAGE_PATH),
+            StorageDriver::Remote_AWS => $digitalOcean($config->get('storage.s3')),
         };
 
         return new League\Flysystem\Filesystem($adapter);
@@ -172,7 +189,7 @@ return [
 
     BodyRendererInterface::class => fn(Twig $twig) => new BodyRenderer($twig->getEnvironment()),
     RouteParserInterface::class => fn(App $app) => $app->getRouteCollector()->getRouteParser(),
-    CacheInterface::class => function(Config $config) {
+    CacheInterface::class => function (Config $config) {
         $redis = new \Redis();
         $config = $config->get('redis');
 
