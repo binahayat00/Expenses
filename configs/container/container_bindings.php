@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 use App\Auth;
 use App\Csrf;
-use Psr\SimpleCache\CacheInterface;
 use Slim\App;
 use App\Config;
 use App\Session;
 use Slim\Csrf\Guard;
-use Slim\Interfaces\RouteParserInterface;
 use Slim\Views\Twig;
 use App\Enum\SameSite;
-use Symfony\Component\Cache\Adapter\RedisAdapter;
-use Symfony\Component\Cache\Psr16Cache;
 use function DI\create;
 use Clockwork\Clockwork;
 use Doctrine\ORM\ORMSetup;
@@ -30,25 +26,32 @@ use Clockwork\Storage\FileStorage;
 use Twig\Extra\Intl\IntlExtension;
 use App\Contracts\SessionInterface;
 use App\RouteEntityBindingStrategy;
+use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Asset\Package;
 use Symfony\Component\Mailer\Mailer;
 use App\Services\UserProviderService;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Asset\Packages;
 use App\Services\EntityManagerService;
+use Symfony\Component\Cache\Psr16Cache;
 use Symfony\Component\Mailer\Transport;
 use Doctrine\ORM\EntityManagerInterface;
+use DoctrineExtensions\Query\Mysql\Year;
+use DoctrineExtensions\Query\Mysql\Month;
+use Slim\Interfaces\RouteParserInterface;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Clockwork\DataSource\DoctrineDataSource;
 use Symfony\Component\Mailer\MailerInterface;
+use DoctrineExtensions\Query\Mysql\DateFormat;
 use Psr\Http\Message\ResponseFactoryInterface;
 use App\Contracts\UserProviderServiceInterface;
 use App\Contracts\EntityManagerServiceInterface;
 use Symfony\Bridge\Twig\Extension\AssetExtension;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
+
 use Symfony\Component\Mime\BodyRendererInterface;
 use App\RequestValidators\RequestValidatorFactory;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use App\Contracts\RequestValidatorFactoryInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
@@ -99,6 +102,18 @@ return [
         );
 
         $configure->addFilter('user', UserFilter::class);
+
+        if (class_exists('DoctrineExtensions\Query\Mysql\Year')) {
+            $configure->addCustomDatetimeFunction('YEAR', Year::class);
+        }
+
+        if (class_exists('DoctrineExtensions\Query\Mysql\Month')) {
+            $configure->addCustomDatetimeFunction('MONTH', Month::class);
+        }
+
+        if (class_exists('DoctrineExtensions\Query\Mysql\DateFormat')) {
+            $configure->addCustomStringFunction('DATE_FORMAT', DateFormat::class);
+        }
 
         return new EntityManager(
             DriverManager::getConnection($config->get('doctrine.connection'), $configure),
