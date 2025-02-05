@@ -22,6 +22,7 @@
     },
     "require": {
         "ext-pdo": "*",
+        "beberlei/doctrineextensions": "^1.5",
         "doctrine/dbal": "^4.2",
         "doctrine/migrations": "^3.8",
         "doctrine/orm": "^3.3",
