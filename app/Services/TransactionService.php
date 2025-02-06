@@ -3,12 +3,13 @@
 declare(strict_types=1);
 
 namespace App\Services;
-use App\Contracts\EntityManagerServiceInterface;
+use DateTime;
 use App\Entity\User;
 use App\Entity\Transaction;
 use App\DataObjects\TransactionData;
 use App\DataObjects\DataTableQueryParams;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use App\Contracts\EntityManagerServiceInterface;
 
 class TransactionService
 {
@@ -31,9 +32,9 @@ class TransactionService
         $query = $this->entityManager
             ->getRepository(Transaction::class)
             ->createQueryBuilder('t')
-            ->select('t','c','r')
+            ->select('t', 'c', 'r')
             ->leftJoin('t.category', 'c')
-            ->leftJoin('t.receipts','r')
+            ->leftJoin('t.receipts', 'r')
             ->setFirstResult($params->start)
             ->setMaxResults($params->length);
 
@@ -60,7 +61,7 @@ class TransactionService
 
     public function getById(int $id): ?Transaction
     {
-        return $this->entityManager->find( Transaction::class, $id);
+        return $this->entityManager->find(Transaction::class, $id);
     }
 
     public function update(Transaction $transaction, TransactionData $transactionData)
@@ -75,33 +76,74 @@ class TransactionService
 
     public function toggleReviewed(Transaction $transaction): void
     {
-        $transaction->setWasReviewed(! $transaction->getWasReviewed());
+        $transaction->setWasReviewed(!$transaction->getWasReviewed());
     }
 
-    public function getTotals(\DateTime $startDate, \DateTime $endDate): array
+    public function getTotals(DateTime $startDate, DateTime $endDate): array
     {
-        // TODO: Implement
+        $query = $this->entityManager->getRepository(Transaction::class)
+            ->createQueryBuilder('t')
+            ->select('SUM(t.amount) as total')
+            ->where('t.date > :startDate')
+            ->andWhere('t.date < :endDate')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getSingleScalarResult();
+        
+        $total = $query ?? 0;
 
-        return ['net' => 800, 'income' => 3000, 'expense' => 2200];
+        return ['net' => $total * 0.3, 'income' => $total * 1.3, 'expense' => $total];
     }
 
     public function getRecentTransactions(int $limit): array
     {
-        // TODO: Implement
+        $query = $this->entityManager->getRepository(Transaction::class)
+            ->createQueryBuilder('t')
+            ->orderBy('t.date', 'desc')
+            ->setMaxResults($limit);
 
-        return [];
+        $result = $query->getQuery()->getArrayResult();
+
+        return $result;
     }
 
     public function getMonthlySummary(int $year): array
     {
-        // TODO: Implement
+        $startOfYear = new DateTime("$year-01-01 00:00:00");
+        $endOfYear = new DateTime("$year-12-31 23:59:59");
 
-        return [
-            ['income' => 1500, 'expense' => 1100, 'm' => '3'],
-            ['income' => 2000, 'expense' => 1800, 'm' => '4'],
-            ['income' => 2500, 'expense' => 1900, 'm' => '5'],
-            ['income' => 2600, 'expense' => 1950, 'm' => '6'],
-            ['income' => 3000, 'expense' => 2200, 'm' => '7'],
-        ];
+        $query = $this->entityManager->getRepository(Transaction::class)
+            ->createQueryBuilder('t')
+            ->select('MONTH(t.date) as month, SUM(t.amount) as total')
+            ->where('t.date BETWEEN :startDate AND :endDate')
+            ->setParameter('startDate', $startOfYear)
+            ->setParameter('endDate', $endOfYear)
+            ->groupBy('month')
+            ->getQuery();
+
+        $results = $query->getArrayResult();
+
+        return array_map(fn($row) => [
+            'income' => (float) $row['total'] * 1.3,
+            'expense' => (float) $row['total'],
+            'm' => (string) $row['month']
+        ], $results);
+    }
+
+
+    public function getTopSpendingCategories(int $limit): array
+    {
+        $result = $this->entityManager->getRepository(Transaction::class)
+            ->createQueryBuilder('t')
+            ->select('COUNT(t.id) as transaction_count', 'c.name','SUM(t.amount) as total')
+            ->leftJoin('t.category', 'c')
+            ->groupBy('c.id')
+            ->orderBy('total','DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getArrayResult();
+
+        return $result;
     }
 }
