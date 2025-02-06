@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Session;
 use App\Entity\User;
 use App\Entity\Category;
 use App\Contracts\SessionInterface;
@@ -81,12 +80,8 @@ class CategoryService
         return new Paginator($query);
     }
 
-    public function getById(int $id): ?Category
+    public function getById(int $id): Category|array|null
     {        
-        if ($this->cache->has($this->cacheKey)) {
-            return $this->cache->get($this->cacheKey);
-        }
-
         return $this->entityManager->find(Category::class, $id);
     }
     public function edit(Category $category, string $name): Category
@@ -123,10 +118,6 @@ class CategoryService
 
     public function getAllKeyedByName(): array
     {
-        if ($this->cache->has($this->cacheKey)) {
-            return $this->cache->get($this->cacheKey);
-        }
-
         $categories = $this->entityManager->getRepository(Category::class)->findAll();
         $categoryMap = [];
 
@@ -134,20 +125,6 @@ class CategoryService
             $categoryMap[strtolower($category->getName())] = $category;
         }
 
-        $this->cache->set($this->cacheKey,$categoryMap);
-
         return $categoryMap;
-    }
-
-    public function getTopSpendingCategories(int $limit): array
-    {
-        // TODO: Implement
-
-        return [
-            ['name' => 'Category 1', 'total' => 700],
-            ['name' => 'Category 2', 'total' => 550],
-            ['name' => 'Category 3', 'total' => 475],
-            ['name' => 'Category 4', 'total' => 325],
-        ];
     }
 }
