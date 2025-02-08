@@ -158,7 +158,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
+        
+      - name: Move Dockerfile to Root
+        run: cp docker/Dockerfile .
+        
       - name: Install AWS Elastic Beanstalk CLI
         run: pip install awsebcli
 
@@ -175,4 +178,4 @@ jobs:
         run: eb init Expenses --platform "Docker" --region us-east-1 || echo "Already initialized"
 
       - name: Deploy to AWS Elastic Beanstalk
-        run: eb deploy Expenses-docker-env
+        run: eb deploy Expenses-docker-env --source docker/
