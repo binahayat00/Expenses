@@ -111,4 +111,4 @@ jobs:
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws s3 cp ./dist s3://example-bucket --recursive
+          aws s3 cp ./dist s3://amir-expense --recursive
