@@ -130,6 +130,17 @@ jobs:
       - name: Upload to S3
         run: aws s3 cp expenses.zip s3://amir-expense/expenses.zip
 
+      - name: Set Version Label
+        run: echo "VERSION_LABEL=deploy-$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
       - name: Deploy to Elastic Beanstalk
-        run: aws elasticbeanstalk create-application-version --application-name Expenses --version-label v1 --source-bundle S3Bucket="amir-expense",S3Key="expenses.zip" &&
-             aws elasticbeanstalk update-environment --application-name Expenses --environment-name Expenses-env-2 --version-label v1
+        run: |
+          aws elasticbeanstalk create-application-version \
+            --application-name Expenses \
+            --version-label $VERSION_LABEL \
+            --source-bundle S3Bucket="amir-expense",S3Key="expenses.zip"
+          
+          aws elasticbeanstalk update-environment \
+            --application-name Expenses \
+            --environment-name Expenses-env-2 \
+            --version-label $VERSION_LABEL
