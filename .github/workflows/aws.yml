@@ -114,9 +114,15 @@ jobs:
           sudo ./aws/install --update
 
       - name: Configure AWS CLI
-        run: aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} &&
-             aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} &&
-             aws configure set region us-east-1
+        run: |
+          if [ -n "${{ secrets.AWS_ACCESS_KEY_ID }}" ] && [ -n "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]; then
+            aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws configure set region us-east-1
+          else
+            echo "AWS credentials are missing. Please check GitHub Secrets."
+            exit 1
+          fi
 
       - name: Zip Application
         run: zip -r expenses.zip .
