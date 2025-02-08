@@ -93,12 +93,12 @@
 #         # cluster: ${{ env.ECS_CLUSTER }}
 #         wait-for-service-stability: true
 
-name: Deploy to AWS
+name: Deploy to AWS Elastic Beanstalk
 
 on:
   push:
     branches:
-      - master  # Or 'production' if you create it
+      - master
 
 jobs:
   deploy:
@@ -107,7 +107,20 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Deploy to AWS
-        run: |
-          aws deploy push --application-name MyApp --s3-location s3://my-bucket/deploy.zip
-          aws deploy create-deployment --application-name MyApp --deployment-group-name MyDeploymentGroup --s3-location bucket=my-bucket,key=deploy.zip,bundleType=zip
+      - name: Install AWS CLI
+        run: sudo apt install awscli -y
+
+      - name: Configure AWS CLI
+        run: aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} &&
+             aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} &&
+             aws configure set region us-east-1
+
+      - name: Zip Application
+        run: zip -r expenses.zip .
+
+      - name: Upload to S3
+        run: aws s3 cp deploy.zip s3://amir-expenses/expenses.zip
+
+      - name: Deploy to Elastic Beanstalk
+        run: aws elasticbeanstalk create-application-version --application-name Expenses --version-label v1 --source-bundle S3Bucket="amir-expenses",S3Key="expenses.zip" &&
+             aws elasticbeanstalk update-environment --application-name Expenses --environment-name Expenses-env-2 --version-label v1
