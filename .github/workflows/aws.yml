@@ -93,12 +93,64 @@
 #         # cluster: ${{ env.ECS_CLUSTER }}
 #         wait-for-service-stability: true
 
+# name: Deploy to AWS Elastic Beanstalk
+
+# on:
+#   push:
+#     branches:
+#       - master
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+
+#       - name: Install AWS CLI
+#         run: |
+#           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+#           unzip awscliv2.zip
+#           sudo ./aws/install --update
+
+#       - name: Configure AWS CLI
+#         run: |
+#           if [ -n "${{ secrets.AWS_ACCESS_KEY_ID }}" ] && [ -n "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]; then
+#             aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+#             aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#             aws configure set region us-east-1
+#           else
+#             echo "AWS credentials are missing. Please check GitHub Secrets."
+#             exit 1
+#           fi
+
+#       - name: Zip Application
+#         run: zip -r expenses.zip .
+
+#       - name: Upload to S3
+#         run: aws s3 cp expenses.zip s3://amir-expense/expenses.zip
+
+#       - name: Set Version Label
+#         run: echo "VERSION_LABEL=deploy-$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+#       - name: Deploy to Elastic Beanstalk
+#         run: |
+#           aws elasticbeanstalk create-application-version \
+#             --application-name Expenses \
+#             --version-label $VERSION_LABEL \
+#             --source-bundle S3Bucket="amir-expense",S3Key="expenses.zip"
+          
+#           aws elasticbeanstalk update-environment \
+#             --application-name Expenses \
+#             --environment-name Expenses-env-2 \
+#             --version-label $VERSION_LABEL
+
 name: Deploy to AWS Elastic Beanstalk
 
 on:
   push:
     branches:
-      - master
+      - master  # Change to the branch you want
 
 jobs:
   deploy:
@@ -107,40 +159,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install AWS CLI
+      - name: Trigger AWS Deployment
         run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install --update
-
-      - name: Configure AWS CLI
-        run: |
-          if [ -n "${{ secrets.AWS_ACCESS_KEY_ID }}" ] && [ -n "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]; then
-            aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-            aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            aws configure set region us-east-1
-          else
-            echo "AWS credentials are missing. Please check GitHub Secrets."
-            exit 1
-          fi
-
-      - name: Zip Application
-        run: zip -r expenses.zip .
-
-      - name: Upload to S3
-        run: aws s3 cp expenses.zip s3://amir-expense/expenses.zip
-
-      - name: Set Version Label
-        run: echo "VERSION_LABEL=deploy-$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
-
-      - name: Deploy to Elastic Beanstalk
-        run: |
-          aws elasticbeanstalk create-application-version \
+          aws deploy create-deployment \
             --application-name Expenses \
-            --version-label $VERSION_LABEL \
-            --source-bundle S3Bucket="amir-expense",S3Key="expenses.zip"
-          
-          aws elasticbeanstalk update-environment \
-            --application-name Expenses \
-            --environment-name Expenses-env-2 \
-            --version-label $VERSION_LABEL
+            --deployment-group-name ExpensesGroup \
+            --github-location repository=binahayat00/Expenses,commitId=${{ github.sha }}
