@@ -178,4 +178,4 @@ jobs:
         run: eb init Expenses --platform "Docker" --region us-east-1 || echo "Already initialized"
 
       - name: Deploy to AWS Elastic Beanstalk
-        run: eb deploy Expenses-docker-env --source docker/
+        run: eb deploy Expenses-docker-env
