@@ -161,6 +161,7 @@ jobs:
 
       - name: Trigger AWS Deployment
         run: |
+          aws configure set region us-east-1 \
           aws deploy create-deployment \
             --application-name Expenses \
             --deployment-group-name ExpensesGroup \
