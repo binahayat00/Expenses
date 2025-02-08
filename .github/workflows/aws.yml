@@ -119,7 +119,7 @@ jobs:
         run: zip -r expenses.zip .
 
       - name: Upload to S3
-        run: aws s3 cp deploy.zip s3://amir-expenses/expenses.zip
+        run: aws s3 cp expenses.zip s3://amir-expenses/expenses.zip
 
       - name: Deploy to Elastic Beanstalk
         run: aws elasticbeanstalk create-application-version --application-name Expenses --version-label v1 --source-bundle S3Bucket="amir-expenses",S3Key="expenses.zip" &&
