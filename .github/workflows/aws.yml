@@ -172,5 +172,4 @@ jobs:
         run: |
           aws deploy create-deployment \
             --application-name Expenses \
-            --deployment-group-name ExpensesGroup \
             --github-location repository=binahayat00/Expenses,commitId=${{ github.sha }}
