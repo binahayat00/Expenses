@@ -3,5 +3,10 @@
     "Image": {
         "Name": "docker/Dockerfile",
         "Update": "true"
-    }
+    },
+    "Ports": [
+        {
+            "ContainerPort": "80"
+        }
+    ]
 }
