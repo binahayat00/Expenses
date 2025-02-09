@@ -1,0 +1,7 @@
+{
+    "AWSEBDockerrunVersion": "1",
+    "Image": {
+        "Name": "docker/Dockerfile",
+        "Update": "true"
+    }
+}
