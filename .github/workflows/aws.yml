@@ -186,4 +186,6 @@ jobs:
           unzip -l deploy.zip  # Debugging: List contents of the zip file to confirm Dockerfile is included
 
       - name: Deploy to AWS Elastic Beanstalk
-        run: eb deploy Expenses-docker-env
+        run: |
+          eb status Expenses-docker-env 
+          eb deploy Expenses-docker-env
