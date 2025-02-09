@@ -151,19 +151,18 @@ on:
   push:
     branches:
       - master  # Change to the branch you want
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        
+
       - name: Move Docker Files to Root
         run: |
           cp -r docker/* .
-          ls -la  # Debugging: List all files to verify Dockerfile is in root
-        
+          ls -la  # Debugging step: Verify Dockerfile is in the root folder
+
       - name: Install AWS Elastic Beanstalk CLI
         run: pip install awsebcli
 
@@ -176,8 +175,11 @@ jobs:
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set region us-east-1
 
-      - name: Initialize Elastic Beanstalk (if needed)
-        run: eb init Expenses --platform "Docker" --region us-east-1 || echo "Already initialized"
+      - name: Verify Deployment Package Contents
+        run: |
+          # Create a zip file of the current directory to simulate the deployment package
+          zip -r deploy.zip . -x "*.git*"
+          unzip -l deploy.zip  # Debugging: List contents of the zip file to confirm Dockerfile is included
 
       - name: Deploy to AWS Elastic Beanstalk
         run: eb deploy Expenses-docker-env
