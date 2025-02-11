@@ -178,12 +178,6 @@ jobs:
       - name: Initialize Elastic Beanstalk (eb init)
         run: |
           eb init Expenses --platform "Docker" --region us-east-1
-          
-      - name: Verify Deployment Package Contents
-        run: |
-          # Create a zip file of the current directory to simulate the deployment package
-          zip -r deploy.zip . -x "*.git*"
-          unzip -l deploy.zip  # Debugging: List contents of the zip file to confirm Dockerfile is included
 
       - name: Deploy to AWS Elastic Beanstalk
         run: |
