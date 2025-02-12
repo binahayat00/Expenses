@@ -8,5 +8,19 @@
         {
             "ContainerPort": "80"
         }
+    ],
+    "Environment": [
+        {
+            "Name": "USER",
+            "Value": "ec2-user"
+        },
+        {
+            "Name": "USER_ID",
+            "Value": "1000"
+        },
+        {
+            "Name": "GROUP_ID",
+            "Value": "1000"
+        }
     ]
 }
