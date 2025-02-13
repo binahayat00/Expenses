@@ -158,11 +158,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Move Docker Files to Root
-        run: |
-          cp -r docker/* .
-          ls -la  # Debugging step: Verify Dockerfile is in the root folder
-
       - name: Install AWS Elastic Beanstalk CLI
         run: pip install awsebcli
 
