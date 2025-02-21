@@ -27,6 +27,7 @@ Encore
     .addEntry("verify", "./resources/assets/js/verify.js")
     .addEntry("profile", "./resources/assets/js/profile.js")
     .addEntry("forgot_password", "./resources/assets/js/forgot_password.js")
+    .addEntry("incomes", "./resources/assets/js/incomes.js")
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()

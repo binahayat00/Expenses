@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Controllers\IncomeController;
 use App\Middleware\RateLimitMiddleware;
 use App\Middleware\ValidateSignatureMiddleware;
 use Slim\App;
@@ -63,6 +64,11 @@ return function (App $app) {
         $group->group('/profile', function(RouteCollectorProxy $profile) {
             $profile->get('', [ProfileController::class, 'index']);
             $profile->post('', [ProfileController::class, 'update']);
+        });
+
+        $group->group('/incomes', function(RouteCollectorProxy $incomes){
+            $incomes->get('', [IncomeController::class, 'index'])->setName('incomes');
+            $incomes->post('', [IncomeController::class, 'store']);
         });
 
     })->add(VerifyEmailMiddleware::class)->add(AuthMiddleware::class);
