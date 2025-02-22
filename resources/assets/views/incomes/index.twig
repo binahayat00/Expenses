@@ -1,0 +1,40 @@
+{% extends 'layout.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('incomes') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	{{ encore_entry_script_tags('incomes') }}
+{% endblock %}
+
+{% block title %}Incomes
+{% endblock %}
+
+{% block content %}
+	<div class="incomes container content-body">
+		<div class="text-end mb-4">
+			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newIncomeModal">
+				<i class="bi bi-plus-circle me-1"></i>
+				New Income
+			</button>
+		</div>
+		{% include 'incomes/income_modal.twig' with {modal: {title: 'Create Income', id: 'newIncomeModal', isEdit: false}} %}
+		{% include 'incomes/income_modal.twig' with {modal: {title: 'Edit Income', id: 'editIncomeModal', isEdit: true}} %}
+		<div>
+			<table id="incomesTable">
+				<thead>
+					<tr>
+						<th>Source</th>
+						<th>Amount</th>
+						<th>Date</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+{% endblock %}
