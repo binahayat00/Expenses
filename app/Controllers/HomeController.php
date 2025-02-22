@@ -7,6 +7,7 @@ use App\Services\CategoryService;
 use App\Services\TransactionService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Views\Twig;
+use App\Config;
 
 class HomeController
 {
@@ -14,15 +15,18 @@ class HomeController
         private readonly Twig $twig,
         private readonly TransactionService $transactionService,
         private readonly CategoryService $categoryService,
-        private readonly ResponseFormatter $responseFormatter
+        private readonly ResponseFormatter $responseFormatter,
+        private readonly Config $config
     )
     {
     }
 
     public function index(Response $response): Response
     {
-        $startDate             = \DateTime::createFromFormat('Y-m-d', date('Y-m-01'));
-        $endDate               = new \DateTime('now');
+        $timezone = new \DateTimeZone($this->config->get('app_timezone'));
+        $startDate             = \DateTime::createFromFormat('Y-m-d', date('Y-m-01'), $timezone);
+        $endDate               = new \DateTime('now', $timezone);
+
         $totals                = $this->transactionService->getTotals($startDate, $endDate);
         $recentTransactions    = $this->transactionService->getRecentTransactions(10);
         $topSpendingCategories = $this->transactionService->getTopSpendingCategories(4);

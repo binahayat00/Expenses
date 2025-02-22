@@ -14,7 +14,10 @@ use App\Contracts\EntityManagerServiceInterface;
 class TransactionService
 {
 
-    public function __construct(private readonly EntityManagerServiceInterface $entityManager)
+    public function __construct(
+        private readonly EntityManagerServiceInterface $entityManager,
+        private readonly IncomeService $incomeService,
+        )
     {
     }
 
@@ -91,9 +94,11 @@ class TransactionService
             ->getQuery()
             ->getSingleScalarResult();
         
-        $total = $query ?? 0;
+        $expenses = $query ?? 0;
 
-        return ['net' => $total * 0.3, 'income' => $total * 1.3, 'expense' => $total];
+        $incomes = $this->incomeService->getTotals($startDate, $endDate);
+
+        return ['net' => $incomes - $expenses, 'income' => $incomes , 'expense' => $expenses];
     }
 
     public function getRecentTransactions(int $limit): array
@@ -124,8 +129,10 @@ class TransactionService
 
         $results = $query->getArrayResult();
 
+        $incomesArray = $this->incomeService->getMonthlySummary($year, $startOfYear, $endOfYear);
+
         return array_map(fn($row) => [
-            'income' => (float) $row['total'] * 1.3,
+            'income' => array_map(fn($income) => (float) ($income[$row['month']] ?? 0) ,$incomesArray)[0],
             'expense' => (float) $row['total'],
             'm' => (string) $row['month']
         ], $results);
