@@ -107,4 +107,11 @@ class IncomeController
 
         return $this->responseFormatter->asJson($response,$updated);
     }
+
+    public function delete(Request $request, Response $response, Income $income): Response
+    {
+        $this->entityManagerService->delete($income, true);
+
+        return $response;
+    }
 }

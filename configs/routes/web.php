@@ -71,6 +71,7 @@ return function (App $app) {
             $incomes->get('/load', [IncomeController::class, 'load'])->setName('load-incomes');
             $incomes->get('/{income}', [IncomeController::class, 'get']);
             $incomes->post('/{income}', [IncomeController::class, 'update']);
+            $incomes->delete('/{income}', [IncomeController::class, 'delete']);
             $incomes->post('', [IncomeController::class, 'store']);
         });
 
