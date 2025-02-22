@@ -41,8 +41,7 @@ class IncomeService
     {
         $income->setAmount($incomeData->amount);
         $income->setSource($incomeData->source);
-        $income->setDate(new DateTime($incomeData->date));
-        $income->setUser($incomeData->user);
+        $income->setDate($incomeData->date);
 
         return $income;
     }

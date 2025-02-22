@@ -69,6 +69,8 @@ return function (App $app) {
         $group->group('/incomes', function(RouteCollectorProxy $incomes){
             $incomes->get('', [IncomeController::class, 'index'])->setName('incomes');
             $incomes->get('/load', [IncomeController::class, 'load'])->setName('load-incomes');
+            $incomes->get('/{income}', [IncomeController::class, 'get']);
+            $incomes->post('/{income}', [IncomeController::class, 'update']);
             $incomes->post('', [IncomeController::class, 'store']);
         });
 

@@ -2,9 +2,11 @@
 
 namespace App\Controllers;
 
+use DateTime;
 use Slim\Views\Twig;
 use App\Entity\Income;
 use App\ResponseFormatter;
+use App\DataObjects\IncomeData;
 use App\Services\IncomeService;
 use App\Services\RequestService;
 use App\Contracts\EntityManagerServiceInterface;
@@ -22,8 +24,7 @@ class IncomeController
         private readonly RequestService $requestService,
         private readonly RequestValidatorFactory $requestValidatorFactory,
         private readonly EntityManagerServiceInterface $entityManagerService
-    )
-    {
+    ) {
     }
 
     public function index(Response $response)
@@ -35,6 +36,17 @@ class IncomeController
             'incomes/index.twig',
             ['incomes' => $incomes]
         );
+    }
+    public function get(Response $response, Income $income): Response
+    {
+        $data = [
+            'id' => $income->getId(),
+            'source' => $income->getSource(),
+            'amount' => (float) $income->getAmount(),
+            'date' => $income->getDate()->format('Y-m-d H:i:s'),
+        ];
+
+        return $this->responseFormatter->asJson($response, $data);
     }
 
     public function store(Request $request, Response $response)
@@ -72,5 +84,27 @@ class IncomeController
             $params->draw,
             $totalIncomes
         );
+    }
+
+    public function update(Request $request, Response $response, Income $income): Response
+    {
+        $data = $this->requestValidatorFactory->make(IncomeRequestValidator::class)->validate(
+            $request->getParsedBody()
+        );
+
+        $updated = $this->incomeService->update(
+            $income,
+            new IncomeData(
+                $data['source'],
+                (float) $data['amount'],
+                new DateTime($data['date'])
+            )
+        );
+        
+        $this->entityManagerService->sync($updated);
+
+        $this->entityManagerService->sync();
+
+        return $this->responseFormatter->asJson($response,$updated);
     }
 }

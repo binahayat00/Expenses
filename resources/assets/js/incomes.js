@@ -45,12 +45,12 @@ window.addEventListener('DOMContentLoaded', function () {
 
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item edit-transaction-btn" href="#" data-id="${row.id}">
+                                    <a class="dropdown-item edit-income-btn" href="#" data-id="${row.id}">
                                         <i class="bi bi-pencil-fill"></i> Edit
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item delete-transaction-btn" href="#" data-id="${row.id}">
+                                    <a class="dropdown-item delete-income-btn" href="#" data-id="${row.id}">
                                         <i class="bi bi-trash3-fill"></i> Delete
                                     </a>
                                 </li>
