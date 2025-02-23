@@ -50,5 +50,5 @@ services:
     container_name: expenses-redis
     restart: always
     ports:
-      - "6380:6379"
+      - "6381:6379"
     command: redis-server --requirepass mypassword
